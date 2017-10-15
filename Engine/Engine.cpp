@@ -102,8 +102,8 @@ void Engine::loop(std::initializer_list<func> list) {
 			}
 
 			//LineSegment::drawLineS(bitmap, Point2D(500, 500), Point2D(100, 100), RED);
-			line.drawLine(RED);
-			//v[0].drawLine(RED);
+			//line.drawLine(RED);
+			v[0].drawLine(RED);
 			//v[1].drawLine(BLUE);
 
 			viewport->drawViewport(bitmap, CYAN);

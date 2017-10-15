@@ -32,5 +32,5 @@ template<class T>
 inline void Viewport::swap(T & a, T & b) {
 	T tmp = a;
 	a = b;
-	b = a;
+	b = tmp;
 }

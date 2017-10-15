@@ -51,21 +51,23 @@ std::vector<LineSegment> Viewport::cutLine(LineSegment line) {
 	int x2 = line.getP2().getX();
 	int y1 = line.getP1().getY();
 	int y2 = line.getP2().getY();
-	char codeP1 = 0;
-	char codeP2 = 0;
+	char codeP1;
+	char codeP2;
 
 	//hehe
 step1:
+	codeP1 = 0;
+	codeP2 = 0;
 	if (x1 < firstCorner.getX()) {
 		codeP1 += (1 < 0);
 	}
 	else if (x1 > oppositeCorner.getX()) {
 		codeP1 += (1 << 1);
 	}
-	if (y1 < firstCorner.getY()) {
+	if (y1 > oppositeCorner.getY()) {
 		codeP1 += (1 << 2);
 	}
-	else if (y1 > oppositeCorner.getY()) {
+	else if (y1 < firstCorner.getY()) {
 		codeP1 += (1 << 3);
 	}
 
@@ -75,10 +77,10 @@ step1:
 	else if (x2 > oppositeCorner.getX()) {
 		codeP2 += (1 << 1);
 	}
-	if (y2 < firstCorner.getY()) {
+	if (y2 > oppositeCorner.getY()) {
 		codeP2 += (1 << 2);
 	}
-	else if (y2 > oppositeCorner.getY()) {
+	else if (y2 < firstCorner.getY()) {
 		codeP2 += (1 << 3);
 	}
 
@@ -103,22 +105,22 @@ step1:
 			swap(y1, y2);
 		}
 
-		if (codeP1 & (1 << 0) == (1 << 0)) {
+		if ((codeP1 & (1 << 0)) == (1 << 0)) {
 			y1 = y1 + (firstCorner.getX() - x1)*(y2 - y1) / (x2 - x1);
 			x1 = firstCorner.getX();
 			goto step1;
 		}
-		if (codeP1 & (1 << 1) == (1 << 1)) {
+		if ((codeP1 & (1 << 1)) == (1 << 1)) {
 			y1 = y1 + (oppositeCorner.getX() - x1)*(y2 - y1) / (x2 - x1);
 			x1 = oppositeCorner.getX();
 			goto step1;
 		}
-		if (codeP1 & (1 << 2) == (1 << 2)) {
+		if ((codeP1 & (1 << 2)) == (1 << 2)) {
 			x1 = x1 + (oppositeCorner.getY() - y1)*(x2 - x1) / (y2 - y1);
 			y1 = oppositeCorner.getY();
 			goto step1;
 		}
-		if (codeP1 & (1 << 3) == (1 << 3)) {
+		if ((codeP1 & (1 << 3)) == (1 << 3)) {
 			x1 = x1 + (firstCorner.getY() - y1)*(x2 - x1) / (y2 - y1);
 			y1 = firstCorner.getY();
 			goto step1;
