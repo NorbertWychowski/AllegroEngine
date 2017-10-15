@@ -57,12 +57,10 @@ void LineSegment::drawLineA(BITMAP * bitmap, Point2D p1, Point2D p2, int color, 
 	double delta;
 
 	if (x1 != x2) {
-		delta = 1.0*(y1 - y2) / (x1 - x2);
-	}
-	else if ((x1 == x2) && (y1 == y2)){
+		delta = (double)(y1 - y2) / (x1 - x2);
+	} else if ((x1 == x2) && (y1 == y2)){
 		return;
-	}
-	else {
+	} else {
 		delta = 2.0;
 	}
 
