@@ -33,13 +33,13 @@ void f1(Engine *e) {
 	LineSegment line4(e->getBITMAP(), Point2D(750, 230), Point2D(40, 190));
 	LineSegment line5(e->getBITMAP(), Point2D(50, 130), Point2D(500, 530));
 
-	std::vector<LineSegment> v2 = e->getViewport()->cutLines({ line1, line2, line3, line4 });
+	std::vector<LineSegment> v2 = e->getViewport().cutLines({ line1, line2, line3, line4 });
 
 	for (LineSegment l : v2) {
 		l.drawLine(BLUE);
 	}
 
-	e->getViewport()->drawViewport(e->getBITMAP(), CYAN);
+	e->getViewport().drawViewport(e->getBITMAP(), CYAN);
 }
 
 int main() {

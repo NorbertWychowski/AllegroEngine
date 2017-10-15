@@ -1,5 +1,8 @@
 #include "Viewport.h"
 
+Viewport::Viewport() {
+}
+
 Viewport::Viewport(Point2D firstCorner, Point2D oppositeCorner) {
 	setViewport(firstCorner, oppositeCorner);
 }

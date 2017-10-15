@@ -62,7 +62,7 @@ public:
 	static Engine & getInstance(struct DefaultResolution resolution);
 	int getWidth();
 	int getHeight();
-	Viewport* getViewport();
+	Viewport getViewport();
 	BITMAP* getBITMAP();
 
 	typedef void(*func)(Engine*);
@@ -93,7 +93,7 @@ public:
 private:
 	BITMAP *bitmap;
 	Timer *timer;
-	Viewport *viewport;
+	Viewport viewport;
 	int width = 800, height = 600;
 	int windowMode = GFX_AUTODETECT_WINDOWED;
 	int exitKey;

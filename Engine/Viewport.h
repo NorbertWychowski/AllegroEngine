@@ -9,6 +9,7 @@
 
 class Viewport {
 public:
+	Viewport();
 	Viewport(Point2D firstCorner, Point2D oppositeCorner);
 	~Viewport();
 

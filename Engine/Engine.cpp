@@ -4,19 +4,18 @@ Engine::Engine(int width, int height) {
 	this->width = width;
 	this->height = height;
 
-	viewport = new Viewport(Point2D(0, 0), Point2D(width, height));
+	viewport.setViewport(Point2D(0, 0), Point2D(width, height));
 }
 
 Engine::Engine(DefaultResolution resolution) {
 	this->width = resolution.width;
 	this->height = resolution.height;
 
-	viewport = new Viewport(Point2D(0, 0), Point2D(width, height));
+	viewport.setViewport(Point2D(0, 0), Point2D(width, height));
 }
 
 Engine::~Engine() {
 	delete timer;
-	delete viewport;
 	destroy_bitmap(bitmap);
 	allegro_exit();
 }
@@ -94,7 +93,7 @@ void Engine::setExitKey(int key) {
 }
 
 void Engine::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
-	viewport->setViewport(firstCorner, oppositeCorner);
+	viewport.setViewport(firstCorner, oppositeCorner);
 }
 
 void Engine::loop(std::initializer_list<func> list) {
@@ -221,7 +220,7 @@ int Engine::getHeight() {
 	return height;
 }
 
-Viewport* Engine::getViewport() {
+Viewport Engine::getViewport() {
 	return viewport;
 }
 
