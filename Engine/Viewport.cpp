@@ -103,8 +103,8 @@ step1:
 	}
 	else if ((codeP1 & codeP2) != 0) {
 		LineSegment l = line;
-		l.setP1(Point2D(x1, y1));
-		l.setP2(Point2D(x2, y2));
+		l.setP1(Point2D(0, 0));
+		l.setP2(Point2D(0, 0));
 		tmp.push_back(l);
 		tmp.push_back(line);
 		return tmp;

@@ -7,6 +7,13 @@ Engine::Engine(int width, int height) {
 	viewport = new Viewport(Point2D(0, 0), Point2D(width, height));
 }
 
+Engine::Engine(DefaultResolution resolution) {
+	this->width = resolution.width;
+	this->height = resolution.height;
+
+	viewport = new Viewport(Point2D(0, 0), Point2D(width, height));
+}
+
 Engine::~Engine() {
 	delete timer;
 	allegro_exit();
@@ -90,34 +97,14 @@ void Engine::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
 
 void Engine::loop(std::initializer_list<func> list) {
 	Timer *timer = new Timer(60);
-	viewport->setViewport(Point2D(500, 50), Point2D(50, 500));
-	LineSegment line1(bitmap, Point2D(550, 130), Point2D(30, 330), DashLine);
-	LineSegment line2(bitmap, Point2D(150, 230), Point2D(630, 530));
-	LineSegment line3(bitmap, Point2D(350, 530), Point2D(350, 330));
-	LineSegment line4(bitmap, Point2D(750, 230), Point2D(40, 190));
-	LineSegment line5(bitmap, Point2D(50, 130), Point2D(500, 530));
-
-	std::vector<LineSegment> v = viewport->cutLine(line1);
 
 	while (!key[exitKey]) {
 		while (timer->getCount() > 0) {
 			for (func f : list) {
 				f(this);
 			}
-
-			v = viewport->cutLines({ line1, line2, line3, line4 });
-
-			viewport->cutLine(line1)[0].drawLine(RED);
-
-			for (LineSegment l : v) {
-				l.drawLine(BLUE);
-			}
-
-			viewport->drawViewport(bitmap, CYAN, DashLine);
-
 			blit(bitmap, screen, 0, 0, 0, 0, width, height);
 			clear_to_color(bitmap, WHITE);
-
 			timer->decreaseCount();
 		}
 	}
@@ -219,6 +206,11 @@ Engine & Engine::getInstance(int width, int height) {
 	return instance;
 }
 
+Engine & Engine::getInstance(DefaultResolution resolution) {
+	static Engine instance(resolution);
+	return instance;
+}
+
 int Engine::getWidth() {
 	return width;
 }
@@ -229,4 +221,8 @@ int Engine::getHeight() {
 
 Viewport* Engine::getViewport() {
 	return viewport;
+}
+
+BITMAP * Engine::getBITMAP() {
+	return bitmap;
 }

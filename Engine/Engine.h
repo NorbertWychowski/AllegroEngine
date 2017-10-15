@@ -46,6 +46,7 @@ class Engine
 {
 public:
 	Engine(int width, int height);
+	Engine(struct DefaultResolution resolution);
 	~Engine();
 
 	int initAllegro(int flags);
@@ -58,9 +59,11 @@ public:
 	void setViewport(Point2D firstCorner, Point2D oppositeCorner);
 
 	static Engine & getInstance(int width, int height);
+	static Engine & getInstance(struct DefaultResolution resolution);
 	int getWidth();
 	int getHeight();
 	Viewport* getViewport();
+	BITMAP* getBITMAP();
 
 	typedef void(*func)(Engine*);
 	void loop(std::initializer_list<func> list);
