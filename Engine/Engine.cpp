@@ -37,11 +37,10 @@ int Engine::initAllegro(int flags) {
 		}
 	}
 	if (flags & INSTALL_SOUND) {
-		if (install_keyboard() < 0) {
+		if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, "") < 0) {
 			return displayErrorMessage("Nie udalo sie zainstalowac dzwieku!");
 		}
-		else {
-			install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, "");
+		else {	
 			set_volume(255, 255);
 		}
 	}
