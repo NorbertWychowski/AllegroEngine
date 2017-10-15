@@ -16,6 +16,8 @@ Engine::Engine(DefaultResolution resolution) {
 
 Engine::~Engine() {
 	delete timer;
+	delete viewport;
+	destroy_bitmap(bitmap);
 	allegro_exit();
 }
 
