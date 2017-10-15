@@ -3,9 +3,14 @@
 
 #include <string>
 #include <vector>
-//#include "Timer.h"
-#include <allegro.h>
+
+#include "Timer.h"
 #include "Point2D.h"
+#include "Viewport.h"
+#include "LineSegment.h"
+
+#include <allegro.h>
+
 
 #include <initializer_list>
 
@@ -50,6 +55,11 @@ public:
 	int displayErrorMessage(std::string message);
 
 	void setExitKey(int key);
+	void setViewport(Point2D firstCorner, Point2D oppositeCorner);
+
+	static Engine & getInstance(int width, int height);
+	int getWidth();
+	int getHeight();
 
 	typedef void(*func)(Engine*);
 	void loop(std::initializer_list<func> list);
@@ -75,13 +85,11 @@ public:
 	void drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int color);
 	void drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, float r, float g, float b);
 
-	static Engine & getInstance(int width, int height);
-
-	int getWidth();
-	int getHeight();
 
 private:
 	BITMAP *bitmap;
+	Timer *timer;
+	Viewport *viewport;
 	int width = 800, height = 600;
 	int windowMode = GFX_AUTODETECT_WINDOWED;
 	int exitKey;

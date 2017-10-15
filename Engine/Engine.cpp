@@ -1,13 +1,14 @@
-#include "TimerFunction.h"
 #include "Engine.h"
 
 Engine::Engine(int width, int height) {
 	this->width = width;
 	this->height = height;
+
+	viewport = new Viewport(Point2D(0, 0), Point2D(width, height));
 }
 
 Engine::~Engine() {
-	//delete timer;
+	delete timer;
 	allegro_exit();
 }
 
@@ -41,9 +42,7 @@ int Engine::initAllegro(int flags) {
 			return displayErrorMessage("Nie udalo sie zainstalowac timera!\n");
 		}
 		else {
-			LOCK_VARIABLE(tick);
-			LOCK_FUNCTION(ticker);
-			install_int_ex(ticker, BPS_TO_TIMER(FRAMES_PER_SECOND));
+			timer = new Timer(FRAMES_PER_SECOND);
 		}
 	}
 
@@ -85,15 +84,36 @@ void Engine::setExitKey(int key) {
 	this->exitKey = key;
 }
 
+void Engine::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
+	viewport->setViewport(firstCorner, oppositeCorner);
+}
+
 void Engine::loop(std::initializer_list<func> list) {
+	Timer *timer = new Timer(60);
+	viewport->setViewport(Point2D(500, 50), Point2D(50, 500));
+	LineSegment line(bitmap, Point2D(300, 300), Point2D(550, 550));
+
+	std::vector<LineSegment> v = viewport->cutLine(line);
+
 	while (!key[exitKey]) {
-		while (tick > 0) {
+		while (timer->getCount() > 0) {
 			for (func f : list) {
 				f(this);
 			}
-			tick--;
+
+			//LineSegment::drawLineS(bitmap, Point2D(500, 500), Point2D(100, 100), RED);
+			line.drawLine(RED);
+			//v[0].drawLine(RED);
+			//v[1].drawLine(BLUE);
+
+			viewport->drawViewport(bitmap, CYAN);
+
+			viewport->cutLine(line);
+
 			blit(bitmap, screen, 0, 0, 0, 0, width, height);
 			clear_to_color(bitmap, WHITE);
+
+			timer->decreaseCount();
 		}
 	}
 }

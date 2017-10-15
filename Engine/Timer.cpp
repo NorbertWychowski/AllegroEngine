@@ -1,7 +1,8 @@
 #include "Timer.h"
 
 Timer::Timer(int speed) {
-	install_param_int(Timer::timerUpdate, (void*)this, BPS_TO_TIMER(100));
+	count = 0;
+	install_param_int_ex(Timer::timerUpdate, (void*)this, BPS_TO_TIMER(speed));
 	LOCK_VARIABLE(this);
 	LOCK_FUNCTION(timerUpdate);
 }
