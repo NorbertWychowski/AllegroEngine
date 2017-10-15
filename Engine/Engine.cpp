@@ -91,9 +91,13 @@ void Engine::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
 void Engine::loop(std::initializer_list<func> list) {
 	Timer *timer = new Timer(60);
 	viewport->setViewport(Point2D(500, 50), Point2D(50, 500));
-	LineSegment line(bitmap, Point2D(300, 300), Point2D(550, 550));
+	LineSegment line1(bitmap, Point2D(550, 130), Point2D(30, 330), DashLine);
+	LineSegment line2(bitmap, Point2D(150, 230), Point2D(630, 530));
+	LineSegment line3(bitmap, Point2D(350, 530), Point2D(350, 330));
+	LineSegment line4(bitmap, Point2D(750, 230), Point2D(40, 190));
+	LineSegment line5(bitmap, Point2D(50, 130), Point2D(500, 530));
 
-	std::vector<LineSegment> v = viewport->cutLine(line);
+	std::vector<LineSegment> v = viewport->cutLine(line1);
 
 	while (!key[exitKey]) {
 		while (timer->getCount() > 0) {
@@ -101,14 +105,15 @@ void Engine::loop(std::initializer_list<func> list) {
 				f(this);
 			}
 
-			//LineSegment::drawLineS(bitmap, Point2D(500, 500), Point2D(100, 100), RED);
-			//line.drawLine(RED);
-			v[0].drawLine(RED);
-			//v[1].drawLine(BLUE);
+			v = viewport->cutLines({ line1, line2, line3, line4 });
 
-			viewport->drawViewport(bitmap, CYAN);
+			viewport->cutLine(line1)[0].drawLine(RED);
 
-			viewport->cutLine(line);
+			for (LineSegment l : v) {
+				l.drawLine(BLUE);
+			}
+
+			viewport->drawViewport(bitmap, CYAN, DashLine);
 
 			blit(bitmap, screen, 0, 0, 0, 0, width, height);
 			clear_to_color(bitmap, WHITE);
@@ -220,4 +225,8 @@ int Engine::getWidth() {
 
 int Engine::getHeight() {
 	return height;
+}
+
+Viewport* Engine::getViewport() {
+	return viewport;
 }

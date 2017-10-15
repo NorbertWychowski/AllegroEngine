@@ -1,10 +1,11 @@
 #include "LineSegment.h"
 
 
-LineSegment::LineSegment(BITMAP * bitmap, Point2D p1, Point2D p2) {
+LineSegment::LineSegment(BITMAP * bitmap, Point2D p1, Point2D p2, LineStyle lineStyle) {
 	this->bitmap = bitmap;
 	this->p1 = p1;
 	this->p2 = p2;
+	this->lineStyle = lineStyle;
 }
 
 LineSegment::~LineSegment()
@@ -12,19 +13,19 @@ LineSegment::~LineSegment()
 }
 
 void LineSegment::drawLine(int color) {
-	drawLineA(this->bitmap, this->p1, this->p2, color);
+	drawLineA(this->bitmap, this->p1, this->p2, color, lineStyle);
 }
 
 void LineSegment::drawLine(float r, float g, float b) {
-	drawLineA(this->bitmap, this->p1, this->p2, makecol(r * 255, g * 255, b * 255));
+	drawLineA(this->bitmap, this->p1, this->p2, makecol(r * 255, g * 255, b * 255), lineStyle);
 }
 
-void LineSegment::drawLineS(BITMAP * bitmap, Point2D p1, Point2D p2, int color) {
-	drawLineA(bitmap, p1, p2, color);
+void LineSegment::drawLineS(BITMAP * bitmap, Point2D p1, Point2D p2, int color, LineStyle lineStyle) {
+	drawLineA(bitmap, p1, p2, color, lineStyle);
 }
 
-void LineSegment::drawLineS(BITMAP * bitmap, Point2D p1, Point2D p2, float r, float g, float b) {
-	drawLineA(bitmap, p1, p2, makecol(r * 255, g * 255, b * 255));
+void LineSegment::drawLineS(BITMAP * bitmap, Point2D p1, Point2D p2, float r, float g, float b, LineStyle lineStyle) {
+	drawLineA(bitmap, p1, p2, makecol(r * 255, g * 255, b * 255), lineStyle);
 }
 
 void LineSegment::setP1(Point2D p1) {
@@ -35,6 +36,10 @@ void LineSegment::setP2(Point2D p2) {
 	this->p2 = p2;
 }
 
+void LineSegment::setLineStyle(LineStyle lineStyle) {
+	this->lineStyle = lineStyle;
+}
+
 Point2D LineSegment::getP1() {
 	return p1;
 }
@@ -43,7 +48,7 @@ Point2D LineSegment::getP2() {
 	return p2;
 }
 
-void LineSegment::drawLineA(BITMAP * bitmap, Point2D p1, Point2D p2, int color) {
+void LineSegment::drawLineA(BITMAP * bitmap, Point2D p1, Point2D p2, int color, LineStyle lineStyle) {
 	double tmpY, tmpX;
 	int x1 = p1.getX();
 	int x2 = p2.getX();
@@ -52,7 +57,7 @@ void LineSegment::drawLineA(BITMAP * bitmap, Point2D p1, Point2D p2, int color) 
 	double delta;
 
 	if (x1 != x2) {
-		delta = (y1 - y2) / (x1 - x2);
+		delta = 1.0*(y1 - y2) / (x1 - x2);
 	}
 	else {
 		delta = 2;
@@ -60,7 +65,7 @@ void LineSegment::drawLineA(BITMAP * bitmap, Point2D p1, Point2D p2, int color) 
 
 	if (abs(delta) > 1) {
 		if (y1 != y2) {
-			delta = (x1 - x2) / (y1 - y2);
+			delta = 1.0*(x1 - x2) / (y1 - y2);
 		}
 		else {
 			putpixel(bitmap, x1, y1, color);
@@ -71,14 +76,24 @@ void LineSegment::drawLineA(BITMAP * bitmap, Point2D p1, Point2D p2, int color) 
 			tmpX = x1;
 			for (int i = y1; i != y2; i++) {
 				tmpX += delta;
-				putpixel(bitmap, round(tmpX), i, color);
+				if (lineStyle == SolidLine)
+					putpixel(bitmap, round(tmpX), i, color);
+				else if (lineStyle == DashLine) {
+					if (i % 8 < 5)
+						putpixel(bitmap, round(tmpX), i, color);
+				}
 			}
 		}
 		else {
 			tmpX = x2;
 			for (int i = y2; i != y1; i++) {
 				tmpX += delta;
-				putpixel(bitmap, round(tmpX), i, color);
+				if (lineStyle == SolidLine)
+					putpixel(bitmap, round(tmpX), i, color);
+				else if (lineStyle == DashLine) {
+					if (i % 8 < 5)
+						putpixel(bitmap, round(tmpX), i, color);
+				}
 			}
 		}
 	}
@@ -87,14 +102,24 @@ void LineSegment::drawLineA(BITMAP * bitmap, Point2D p1, Point2D p2, int color) 
 			tmpY = y1;
 			for (int i = x1; i != x2; i++) {
 				tmpY += delta;
-				putpixel(bitmap, i, round(tmpY), color);
+				if (lineStyle == SolidLine)
+					putpixel(bitmap, i, round(tmpY), color);
+				else if (lineStyle == DashLine) {
+					if (i % 8 < 5)
+						putpixel(bitmap, i, round(tmpY), color);
+				}
 			}
 		}
 		else {
 			tmpY = y2;
 			for (int i = x2; i != x1; i++) {
 				tmpY += delta;
-				putpixel(bitmap, i, round(tmpY), color);
+				if (lineStyle == SolidLine)
+					putpixel(bitmap, i, round(tmpY), color);
+				else if (lineStyle == DashLine) {
+					if (i % 8 < 5)
+						putpixel(bitmap, i, round(tmpY), color);
+				}
 			}
 		}
 	}

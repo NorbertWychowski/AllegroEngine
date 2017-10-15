@@ -12,12 +12,13 @@ public:
 	Viewport(Point2D firstCorner, Point2D oppositeCorner);
 	~Viewport();
 
-	void drawViewport(BITMAP *bitmap, int color);
-	void drawViewport(BITMAP *bitmap, float r, float g, float b);
+	void drawViewport(BITMAP *bitmap, int color, LineStyle lineStyle = DashLine);
+	void drawViewport(BITMAP *bitmap, float r, float g, float b, LineStyle lineStyle = DashLine);
 
 	void setViewport(Point2D firstCorner, Point2D oppositeCorner);
 
 	std::vector<LineSegment> cutLine(LineSegment line);
+	std::vector<LineSegment> cutLines(std::vector<LineSegment> lines);
 private:
 	Point2D firstCorner;
 	Point2D oppositeCorner;

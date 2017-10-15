@@ -60,6 +60,7 @@ public:
 	static Engine & getInstance(int width, int height);
 	int getWidth();
 	int getHeight();
+	Viewport* getViewport();
 
 	typedef void(*func)(Engine*);
 	void loop(std::initializer_list<func> list);

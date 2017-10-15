@@ -7,18 +7,26 @@ Viewport::Viewport(Point2D firstCorner, Point2D oppositeCorner) {
 Viewport::~Viewport() {
 }
 
-void Viewport::drawViewport(BITMAP * bitmap, int color) {
-	line(bitmap, firstCorner.getX(), firstCorner.getY(), firstCorner.getX(), oppositeCorner.getY(), color);
-	line(bitmap, firstCorner.getX(), firstCorner.getY(), oppositeCorner.getX(), firstCorner.getY(), color);
-	line(bitmap, oppositeCorner.getX(), oppositeCorner.getY(), firstCorner.getX(), oppositeCorner.getY(), color);
-	line(bitmap, oppositeCorner.getX(), oppositeCorner.getY(), oppositeCorner.getX(), firstCorner.getY(), color);
+void Viewport::drawViewport(BITMAP * bitmap, int color, LineStyle lineStyle) {
+	LineSegment::drawLineS(bitmap, Point2D(firstCorner.getX(), firstCorner.getY()),
+		Point2D(firstCorner.getX(), oppositeCorner.getY()), color, lineStyle);
+	LineSegment::drawLineS(bitmap, Point2D(firstCorner.getX(), firstCorner.getY()), 
+		Point2D(oppositeCorner.getX(), firstCorner.getY()), color, lineStyle);
+	LineSegment::drawLineS(bitmap, Point2D(oppositeCorner.getX(), oppositeCorner.getY()), 
+		Point2D(firstCorner.getX(), oppositeCorner.getY()), color, lineStyle);
+	LineSegment::drawLineS(bitmap, Point2D(oppositeCorner.getX(), oppositeCorner.getY()), 
+		Point2D(oppositeCorner.getX(), firstCorner.getY()), color, lineStyle);
 }
 
-void Viewport::drawViewport(BITMAP * bitmap, float r, float g, float b) {
-	line(bitmap, firstCorner.getX(), firstCorner.getY(), firstCorner.getX(), oppositeCorner.getY(), makecol(r * 255, g * 255, b * 255));
-	line(bitmap, firstCorner.getX(), firstCorner.getY(), oppositeCorner.getX(), firstCorner.getY(), makecol(r * 255, g * 255, b * 255));
-	line(bitmap, oppositeCorner.getX(), oppositeCorner.getY(), firstCorner.getX(), oppositeCorner.getY(), makecol(r * 255, g * 255, b * 255));
-	line(bitmap, oppositeCorner.getX(), oppositeCorner.getY(), oppositeCorner.getX(), firstCorner.getY(), makecol(r * 255, g * 255, b * 255));
+void Viewport::drawViewport(BITMAP * bitmap, float r, float g, float b, LineStyle lineStyle) {
+	LineSegment::drawLineS(bitmap, Point2D(firstCorner.getX(), firstCorner.getY()),
+		Point2D(firstCorner.getX(), oppositeCorner.getY()), makecol(r*255, g*255, b*255), lineStyle);
+	LineSegment::drawLineS(bitmap, Point2D(firstCorner.getX(), firstCorner.getY()),
+		Point2D(oppositeCorner.getX(), firstCorner.getY()), makecol(r * 255, g * 255, b * 255), lineStyle);
+	LineSegment::drawLineS(bitmap, Point2D(oppositeCorner.getX(), oppositeCorner.getY()),
+		Point2D(firstCorner.getX(), oppositeCorner.getY()), makecol(r * 255, g * 255, b * 255), lineStyle);
+	LineSegment::drawLineS(bitmap, Point2D(oppositeCorner.getX(), oppositeCorner.getY()),
+		Point2D(oppositeCorner.getX(), firstCorner.getY()), makecol(r * 255, g * 255, b * 255), lineStyle);
 }
 
 void Viewport::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
@@ -59,7 +67,7 @@ step1:
 	codeP1 = 0;
 	codeP2 = 0;
 	if (x1 < firstCorner.getX()) {
-		codeP1 += (1 < 0);
+		codeP1 += (1 << 0);
 	}
 	else if (x1 > oppositeCorner.getX()) {
 		codeP1 += (1 << 1);
@@ -72,7 +80,7 @@ step1:
 	}
 
 	if (x2 < firstCorner.getX()) {
-		codeP2 += (1 < 0);
+		codeP2 += (1 << 0);
 	}
 	else if (x2 > oppositeCorner.getX()) {
 		codeP2 += (1 << 1);
@@ -84,18 +92,21 @@ step1:
 		codeP2 += (1 << 3);
 	}
 
-	if (codeP1 == 0 && codeP2 == 0) {
+	if ((codeP1 == 0) && (codeP2 == 0)) {
 		LineSegment l = line;
 		l.setP1(Point2D(x1, y1));
 		l.setP2(Point2D(x2, y2));
 		tmp.push_back(l);
+		tmp.push_back(line);
+
 		return tmp;
 	}
-	else if (codeP1 & codeP2 != 0) {
+	else if ((codeP1 & codeP2) != 0) {
 		LineSegment l = line;
 		l.setP1(Point2D(x1, y1));
 		l.setP2(Point2D(x2, y2));
 		tmp.push_back(l);
+		tmp.push_back(line);
 		return tmp;
 	}
 	else {
@@ -125,6 +136,15 @@ step1:
 			y1 = firstCorner.getY();
 			goto step1;
 		}
+	}
+	return tmp;
+}
+
+std::vector<LineSegment> Viewport::cutLines(std::vector<LineSegment> lines) {
+	std::vector<LineSegment> tmp;
+
+	for (LineSegment line : lines) {
+		tmp.push_back(cutLine(line)[0]);
 	}
 	return tmp;
 }
