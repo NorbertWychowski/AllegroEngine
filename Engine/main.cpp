@@ -27,17 +27,26 @@ void f1(Engine *e) {
 	e->drawRectangle(Point2D(100, 100), Point2D(200, 200), BLUE);
 	e->drawTriangle(Point2D(300, 100), Point2D(100, 300), Point2D(250, 250), YELLOW);
 
-	LineSegment line1(e->getBITMAP(), Point2D(550, 130), Point2D(30, 330), DashLine);
-	LineSegment line2(e->getBITMAP(), Point2D(150, 230), Point2D(630, 530));
-	LineSegment line3(e->getBITMAP(), Point2D(350, 530), Point2D(350, 330));
-	LineSegment line4(e->getBITMAP(), Point2D(750, 230), Point2D(40, 190));
-	LineSegment line5(e->getBITMAP(), Point2D(50, 130), Point2D(500, 530));
+	LineSegment line1(e->getBITMAP(), Point2D(550, 130), Point2D(30, 830), DashLine);
+	LineSegment line2(e->getBITMAP(), Point2D(50, 130), Point2D(1330, 930));
+	LineSegment line3(e->getBITMAP(), Point2D(850, 30), Point2D(50, 330));
+	LineSegment line4(e->getBITMAP(), Point2D(750, 230), Point2D(400, 690));
+	LineSegment line5(e->getBITMAP(), Point2D(300, 30), Point2D(300, 730));
+	LineSegment line6(e->getBITMAP(), Point2D(30, 330), Point2D(900, 330), DashLine);
 
-	std::vector<LineSegment> v2 = e->getViewport().cutLines({ line1, line2, line3, line4 });
+	std::vector<LineSegment> v2 = e->getViewport().cutLines({ line1, line2, line3, line4, line5, line6 });
 
+	/*
 	for (LineSegment l : v2) {
 		l.drawLine(BLUE);
-	}
+	}*/
+
+	v2[0].drawLine(RED);
+	v2[1].drawLine(BLACK);
+	v2[2].drawLine(CYAN);
+	v2[3].drawLine(MAGENTA);
+	v2[4].drawLine(0.5f, 1.0f, 0.0f);
+	v2[5].drawLine(0.0f, 0.0f, 1.0f);
 
 	e->getViewport().drawViewport(e->getBITMAP(), CYAN);
 }
@@ -49,7 +58,7 @@ int main() {
 		return -1;
 	e.setExitKey(KEY_ESC);
 
-	e.setViewport(Point2D(50, 50), Point2D(300, 300));
+	e.setViewport(Point2D(50, 50), Point2D(700, 700));
 
 	e.loop({ f1 });
 
