@@ -48,6 +48,9 @@ void f1(Engine *e) {
 	v2[4].drawLine(0.5f, 1.0f, 0.0f);
 	v2[5].drawLine(0.0f, 0.0f, 1.0f);
 
+	int x = 0;
+	int y = 10 / x;
+
 	e->getViewport().drawViewport(e->getBITMAP(), CYAN);
 }
 
@@ -58,7 +61,7 @@ int main() {
 		return -1;
 	e.setExitKey(KEY_ESC);
 
-	e.setViewport(Point2D(50, 50), Point2D(700, 700));
+	e.setViewport(Point2D(50, 50), Point2D(1000, 800));
 
 	e.loop({ f1 });
 
