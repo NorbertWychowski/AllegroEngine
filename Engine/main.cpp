@@ -22,7 +22,8 @@ void f1(Engine *e) {
 	v.push_back(Point2D(102 + x, 102 + y));
 
 	e->drawPoints(v, BLACK);
-	e->drawCircle(Point2D(300, 300), 50, RED);
+	e->drawCircle(Point2D(300, 300), 520, RED);
+	e->drawCircle4(Point2D(300, 300), 400, RED);
 	e->drawFilledCircle(Point2D(300, 300), 30, CYAN);
 	e->drawRectangle(Point2D(100, 100), Point2D(200, 200), BLUE);
 	e->drawTriangle(Point2D(300, 100), Point2D(100, 300), Point2D(250, 250), YELLOW);
@@ -48,19 +49,33 @@ void f1(Engine *e) {
 	v2[4].drawLine(0.5f, 1.0f, 0.0f);
 	v2[5].drawLine(0.0f, 0.0f, 1.0f);
 
-	e->getViewport().drawViewport(e->getBITMAP(), CYAN);
+	e->getViewport().drawViewport(e->getBITMAP(), CYAN, SolidLine);
+}
+
+void f2(Engine *e) {
+	if (mouse_b & LEFT_BUTTON) {
+	}
+	if (mouse_b & RIGHT_BUTTON) {
+		e->fillStack(Point2D(mouse_x, mouse_y), RED);
+	}
+	if (mouse_b & MIDDLE_BUTTON) {
+
+	}
 }
 
 int main() {
 	Engine e = Engine::getInstance(RES_1600x900);
 
-	if (e.initAllegro(INSTALL_KEYBOARD | INSTALL_TIMER) < 0)
+	if (e.initAllegro(INSTALL_KEYBOARD | INSTALL_TIMER | INSTALL_MOUSE) < 0)
 		return -1;
 	e.setExitKey(KEY_ESC);
 
+	if (e.initMouseEvent({ f2 }) < 0)
+		return -1;
 	e.setViewport(Point2D(50, 50), Point2D(800, 800));
 
-	e.loop({ f1 });
+
+	e.loop({ f1 }, DISABLE_SCREEN_REFRESH);
 
 	return 1;
 }

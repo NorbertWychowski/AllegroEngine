@@ -15,11 +15,17 @@ public:
 
 	void drawViewport(BITMAP *bitmap, int color, LineStyle lineStyle = DashLine);
 	void drawViewport(BITMAP *bitmap, float r, float g, float b, LineStyle lineStyle = DashLine);
+	void drawViewport(BITMAP *bitmap, int r, int g, int b, LineStyle lineStyle = DashLine);
 
 	void setViewport(Point2D firstCorner, Point2D oppositeCorner);
 
 	std::vector<LineSegment> cutLine(LineSegment line);
 	std::vector<LineSegment> cutLines(std::vector<LineSegment> lines);
+	void drawPixel(Point2D point, BITMAP* bitmap, int color);
+	void drawPixel(Point2D point, BITMAP* bitmap, float r, float g, float b);
+	void drawPixel(Point2D point, BITMAP* bitmap, int r, int g, int b);
+	bool isInViewport(Point2D point);
+
 private:
 	Point2D firstCorner;
 	Point2D oppositeCorner;

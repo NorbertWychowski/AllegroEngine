@@ -95,6 +95,9 @@
       <AdditionalLibraryDirectories>C:\Users\Norbert\Documents\allegro\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>alleg.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>NotSet</SubSystem>
+      <HeapCommitSize>
+      </HeapCommitSize>
+      <StackReserveSize>64000000</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -119,6 +122,9 @@
       <AdditionalLibraryDirectories>C:\Users\Norbert\Documents\allegro\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>alleg.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>NotSet</SubSystem>
+      <HeapCommitSize>
+      </HeapCommitSize>
+      <StackReserveSize>64000000</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

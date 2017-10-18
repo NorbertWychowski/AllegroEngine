@@ -1,4 +1,10 @@
+#if _MSC_VER && !__INTEL_COMPILER
+#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
+
 #include "Engine.h"
+
 
 Engine::Engine(int width, int height) {
 	this->width = width;
@@ -16,6 +22,7 @@ Engine::Engine(DefaultResolution resolution) {
 
 Engine::~Engine() {
 	delete timer;
+	show_mouse(screen);
 	destroy_bitmap(bitmap);
 	allegro_exit();
 }
@@ -23,12 +30,15 @@ Engine::~Engine() {
 int Engine::initAllegro(int flags) {
 	allegro_init();
 
+	this->installedDevices = flags;
+
 	if (flags & INSTALL_MOUSE) {
 		if (install_mouse() < 0) {
 			return displayErrorMessage("Nie udalo sie zainstalowac myszy!");
 		}
 		else {
 			enable_hardware_cursor();
+			show_os_cursor(MOUSE_CURSOR_ARROW);
 		}
 	}
 	if (flags & INSTALL_KEYBOARD) {
@@ -40,7 +50,7 @@ int Engine::initAllegro(int flags) {
 		if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, "") < 0) {
 			return displayErrorMessage("Nie udalo sie zainstalowac dzwieku!");
 		}
-		else {	
+		else {
 			set_volume(255, 255);
 		}
 	}
@@ -73,17 +83,25 @@ int Engine::initAllegro(int flags, int windowMode, DefaultResolution resolution)
 	return 1;
 }
 
+int Engine::initMouseEvent(std::initializer_list<func> list) {
+	if (installedDevices & INSTALL_MOUSE) {
+		mouseFunctions = list;
+		return 1;
+	}
+	else {
+		return displayErrorMessage("Nalezy dodac obsluge myszy!\n");
+	}
+}
+
 int Engine::displayErrorMessage(char message[]) {
 	set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
 	allegro_message(message, allegro_error);
-	allegro_exit();
 	return -1;
 }
 
 int Engine::displayErrorMessage(std::string message) {
 	set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
 	allegro_message(message.c_str(), allegro_error);
-	allegro_exit();
 	return -1;
 }
 
@@ -95,64 +113,83 @@ void Engine::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
 	viewport.setViewport(firstCorner, oppositeCorner);
 }
 
-void Engine::loop(std::initializer_list<func> list) {
+void Engine::loop(std::initializer_list<func> list, bool screenRefresh) {
 	Timer *timer = new Timer(60);
+
+	int x = 0;
+	int y = 0;
 
 	while (!key[exitKey]) {
 		while (timer->getCount() > 0) {
 			for (func f : list) {
 				f(this);
 			}
+			for (func m : mouseFunctions) {
+				m(this);
+			}
+
+			//show_mouse(bitmap);
 			blit(bitmap, screen, 0, 0, 0, 0, width, height);
-			clear_to_color(bitmap, WHITE);
+			if (screenRefresh)
+				clear_to_color(bitmap, WHITE);
+
 			timer->decreaseCount();
 		}
 	}
 }
 
 void Engine::drawPoint(Point2D point, int color) {
-	putpixel(bitmap, point.getX(), point.getY(), color);
+	viewport.drawPixel(point, bitmap, color);
 }
 
 void Engine::drawPoint(Point2D point, float r, float g, float b) {
-	putpixel(bitmap, point.getX(), point.getY(), makecol(r * 255, g * 255, b * 255));
+	viewport.drawPixel(point, bitmap, makecol(r * 255, g * 255, b * 255));
+}
+
+void Engine::drawPoint(Point2D point, int r, int g, int b) {
+	viewport.drawPixel(point, bitmap, makecol(r, g, b));
 }
 
 void Engine::drawPoints(std::vector<Point2D> points, int color) {
 	for (Point2D p : points) {
-		putpixel(bitmap, p.getX(), p.getY(), color);
+		viewport.drawPixel(p, bitmap, color);
 	}
 }
 
 void Engine::drawPoints(std::vector<Point2D> points, float r, float g, float b) {
 	for (Point2D p : points) {
-		putpixel(bitmap, p.getX(), p.getY(), makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(p, bitmap, makecol(r * 255, g * 255, b * 255));
 	}
 }
 
-void Engine::drawEllipse(Point2D point, int Rx, int Ry, int color) {
-	ellipse(bitmap, point.getX(), point.getY(), Rx, Ry, color);
-}
-
-void Engine::drawEllipse(Point2D point, int Rx, int Ry, float r, float g, float b) {
-	ellipse(bitmap, point.getX(), point.getY(), Rx, Ry, makecol(r * 255, g * 255, b * 255));
-}
-
-void Engine::drawFilledEllipse(Point2D point, int Rx, int Ry, int color) {
-	ellipsefill(bitmap, point.getX(), point.getY(), Rx, Ry, color);
-}
-
-void Engine::drawFilledEllipse(Point2D point, int Rx, int Ry, float r, float g, float b) {
-	ellipsefill(bitmap, point.getX(), point.getY(), Rx, Ry, makecol(r * 255, g * 255, b * 255));
+void Engine::drawPoints(std::vector<Point2D> points, int r, int g, int b) {
+	for (Point2D p : points) {
+		viewport.drawPixel(p, bitmap, makecol(r, g, b));
+	}
 }
 
 void Engine::drawRectangle(Point2D firstCorner, Point2D oppositeCorner, int color) {
-	rect(bitmap, firstCorner.getX(), firstCorner.getY(), oppositeCorner.getX(), oppositeCorner.getY(), color);
+	for (LineSegment l : viewport.cutLines({ LineSegment(bitmap, firstCorner, Point2D(firstCorner.getX(), oppositeCorner.getY())),
+		LineSegment(bitmap, firstCorner, Point2D(oppositeCorner.getX(), firstCorner.getY())),
+		LineSegment(bitmap, oppositeCorner, Point2D(oppositeCorner.getX(), firstCorner.getY())),
+		LineSegment(bitmap, oppositeCorner, Point2D(firstCorner.getX(), oppositeCorner.getY())) }))
+		l.drawLine(color);
 }
 
 void Engine::drawRectangle(Point2D firstCorner, Point2D oppositeCorner, float r, float g, float b) {
-	rect(bitmap, firstCorner.getX(), firstCorner.getY(), oppositeCorner.getX(), oppositeCorner.getY(),
-		makecol(r * 255, g * 255, b * 255));
+	for (LineSegment l : viewport.cutLines({ LineSegment(bitmap, firstCorner, Point2D(firstCorner.getX(), oppositeCorner.getY())),
+		LineSegment(bitmap, firstCorner, Point2D(oppositeCorner.getX(), firstCorner.getY())),
+		LineSegment(bitmap, oppositeCorner, Point2D(oppositeCorner.getX(), firstCorner.getY())),
+		LineSegment(bitmap, oppositeCorner, Point2D(firstCorner.getX(), oppositeCorner.getY())) }))
+		l.drawLine(makecol(r * 255, g * 255, b * 255));
+}
+
+void Engine::drawRectangle(Point2D firstCorner, Point2D oppositeCorner, int r, int g, int b) {
+	for (LineSegment l : viewport.cutLines({ LineSegment(bitmap, firstCorner, Point2D(firstCorner.getX(), oppositeCorner.getY())),
+		LineSegment(bitmap, firstCorner, Point2D(oppositeCorner.getX(), firstCorner.getY())),
+		LineSegment(bitmap, oppositeCorner, Point2D(oppositeCorner.getX(), firstCorner.getY())),
+		LineSegment(bitmap, oppositeCorner, Point2D(firstCorner.getX(), oppositeCorner.getY())) }))
+		l.drawLine(makecol(r, g, b));
 }
 
 void Engine::drawFilledRectangle(Point2D firstCorner, Point2D oppositeCorner, int color) {
@@ -164,12 +201,97 @@ void Engine::drawFilledRectangle(Point2D firstCorner, Point2D oppositeCorner, fl
 		makecol(r * 255, g * 255, b * 255));
 }
 
+void Engine::drawFilledRectangle(Point2D firstCorner, Point2D oppositeCorner, int r, int g, int b) {
+}
+
 void Engine::drawCircle(Point2D point, int radius, int color) {
-	circle(bitmap, point.getX(), point.getY(), radius, color);
+	int x0 = point.getX();
+	int y0 = point.getY();
+	float step = asin(1.0 / radius);
+
+	for (float alpha = 0; alpha < M_PI*0.25f; alpha += step) {
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + radius*sin(alpha), y0 + radius*cos(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + radius*sin(alpha), y0 + -1.0*radius*cos(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*sin(alpha), y0 + radius*cos(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*sin(alpha), y0 + -1.0*radius*cos(alpha)), bitmap, color);
+	}
 }
 
 void Engine::drawCircle(Point2D point, int radius, float r, float g, float b) {
-	circle(bitmap, point.getX(), point.getY(), radius, makecol(r * 255, g * 255, b * 255));
+	int x0 = point.getX();
+	int y0 = point.getY();
+	float step = asin(1.0 / radius);
+
+	for (float alpha = 0; alpha < M_PI*0.25f; alpha += step) {
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + radius*sin(alpha), y0 + radius*cos(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + radius*sin(alpha), y0 + -1.0*radius*cos(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*sin(alpha), y0 + radius*cos(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*sin(alpha), y0 + -1.0*radius*cos(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+	}
+}
+
+void Engine::drawCircle(Point2D point, int radius, int r, int g, int b) {
+	int x0 = point.getX();
+	int y0 = point.getY();
+	float step = asin(1.0 / radius);
+
+	for (float alpha = 0; alpha < M_PI*0.25f; alpha += step) {
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + radius*sin(alpha), y0 + radius*cos(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + radius*sin(alpha), y0 + -1.0*radius*cos(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*sin(alpha), y0 + radius*cos(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*sin(alpha), y0 + -1.0*radius*cos(alpha)), bitmap, makecol(r, g, b));
+	}
+}
+
+void Engine::drawCircle4(Point2D point, int radius, int color) {
+	int x0 = point.getX();
+	int y0 = point.getY();
+	float step = asin(1.0 / radius);
+
+	for (float alpha = 0; alpha < M_PI*0.5f; alpha += step) {
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, color);
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, color);
+	}
+}
+
+void Engine::drawCircle4(Point2D point, int radius, float r, float g, float b) {
+	int x0 = point.getX();
+	int y0 = point.getY();
+	float step = asin(1.0 / radius);
+
+	for (float alpha = 0; alpha < M_PI*0.5f; alpha += step) {
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, makecol(r * 255, g * 255, b * 255));
+	}
+}
+
+void Engine::drawCircle4(Point2D point, int radius, int r, int g, int b) {
+	int x0 = point.getX();
+	int y0 = point.getY();
+	float step = asin(1.0 / radius);
+
+	for (float alpha = 0; alpha < M_PI*0.5f; alpha += step) {
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + radius*sin(alpha)), bitmap, makecol(r, g, b));
+		viewport.drawPixel(Point2D(x0 + -1.0*radius*cos(alpha), y0 + -1.0*radius*sin(alpha)), bitmap, makecol(r, g, b));
+	}
 }
 
 void Engine::drawFilledCircle(Point2D point, int radius, int color) {
@@ -180,16 +302,22 @@ void Engine::drawFilledCircle(Point2D point, int radius, float r, float g, float
 	circlefill(bitmap, point.getX(), point.getY(), radius, makecol(r * 255, g * 255, b * 255));
 }
 
+void Engine::drawFilledCircle(Point2D point, int radius, int r, int g, int b) {
+}
+
 void Engine::drawTriangle(Point2D p1, Point2D p2, Point2D p3, int color) {
-	line(bitmap, p1.getX(), p1.getY(), p2.getX(), p2.getY(), color);
-	line(bitmap, p2.getX(), p2.getY(), p3.getX(), p3.getY(), color);
-	line(bitmap, p1.getX(), p1.getY(), p3.getX(), p3.getY(), color);
+	for (LineSegment l : viewport.cutLines({ LineSegment(bitmap, p1, p2), LineSegment(bitmap, p2, p3), LineSegment(bitmap, p1, p3) }))
+		l.drawLine(color);
 }
 
 void Engine::drawTriangle(Point2D p1, Point2D p2, Point2D p3, float r, float g, float b) {
-	line(bitmap, p1.getX(), p1.getY(), p2.getX(), p2.getY(), makecol(r * 255, g * 255, b * 255));
-	line(bitmap, p2.getX(), p2.getY(), p3.getX(), p3.getY(), makecol(r * 255, g * 255, b * 255));
-	line(bitmap, p1.getX(), p1.getY(), p3.getX(), p3.getY(), makecol(r * 255, g * 255, b * 255));
+	for (LineSegment l : viewport.cutLines({ LineSegment(bitmap, p1, p2), LineSegment(bitmap, p2, p3), LineSegment(bitmap, p1, p3) }))
+		l.drawLine(makecol(r * 255, g * 255, b * 255));
+}
+
+void Engine::drawTriangle(Point2D p1, Point2D p2, Point2D p3, int r, int g, int b) {
+	for (LineSegment l : viewport.cutLines({ LineSegment(bitmap, p1, p2), LineSegment(bitmap, p2, p3), LineSegment(bitmap, p1, p3) }))
+		l.drawLine(makecol(r, g, b));
 }
 
 void Engine::drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int color) {
@@ -199,6 +327,89 @@ void Engine::drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int color) {
 void Engine::drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, float r, float g, float b) {
 	triangle(bitmap, p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY(),
 		makecol(r * 255, g * 255, b * 255));
+}
+
+void Engine::drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int r, int g, int b) {
+
+}
+
+void Engine::fill(Point2D p, int color) {
+	if ((getpixel(bitmap, p.getX(), p.getY()) != color) && viewport.isInViewport(p)) {
+		fill(Point2D(p.getX() + 1, p.getY()), color, getpixel(bitmap, p.getX(), p.getY()));
+		fill(Point2D(p.getX() - 1, p.getY()), color, getpixel(bitmap, p.getX(), p.getY()));
+		fill(Point2D(p.getX(), p.getY() + 1), color, getpixel(bitmap, p.getX(), p.getY()));
+		fill(Point2D(p.getX(), p.getY() - 1), color, getpixel(bitmap, p.getX(), p.getY()));
+	}
+}
+
+void Engine::fill(Point2D p, float r, float g, float b) {
+	if ((getpixel(bitmap, p.getX(), p.getY()) != makecol(r * 255, g * 255, b * 255)) && viewport.isInViewport(p)) {
+		fill(Point2D(p.getX() + 1, p.getY()), makecol(r * 255, g * 255, b * 255), getpixel(bitmap, p.getX(), p.getY()));
+		fill(Point2D(p.getX() - 1, p.getY()), makecol(r * 255, g * 255, b * 255), getpixel(bitmap, p.getX(), p.getY()));
+		fill(Point2D(p.getX(), p.getY() + 1), makecol(r * 255, g * 255, b * 255), getpixel(bitmap, p.getX(), p.getY()));
+		fill(Point2D(p.getX(), p.getY() - 1), makecol(r * 255, g * 255, b * 255), getpixel(bitmap, p.getX(), p.getY()));
+	}
+}
+
+void Engine::fill(Point2D p, int r, int g, int b) {
+	if ((getpixel(bitmap, p.getX(), p.getY()) != makecol(r, g, b)) && viewport.isInViewport(p)) {
+		fill(Point2D(p.getX() + 1, p.getY()), makecol(r, g, b), getpixel(bitmap, p.getX(), p.getY()));
+		fill(Point2D(p.getX() - 1, p.getY()), makecol(r, g, b), getpixel(bitmap, p.getX(), p.getY()));
+		fill(Point2D(p.getX(), p.getY() + 1), makecol(r, g, b), getpixel(bitmap, p.getX(), p.getY()));
+		fill(Point2D(p.getX(), p.getY() - 1), makecol(r, g, b), getpixel(bitmap, p.getX(), p.getY()));
+	}
+}
+
+void Engine::fillStack(Point2D p, int color) {
+	fillStack(p, color, getpixel(bitmap, p.getX(), p.getY()));
+}
+
+void Engine::fillStack(Point2D p, float r, float g, float b) {
+	fillStack(p, makecol(r * 255, g * 255, b * 255), getpixel(bitmap, p.getX(), p.getY()));
+}
+
+void Engine::fillStack(Point2D p, int r, int g, int b) {
+	fillStack(p, makecol(r, g, b), getpixel(bitmap, p.getX(), p.getY()));
+}
+
+void Engine::fill(Point2D p, int color, int backgroundColor) {
+	if (getpixel(bitmap, p.getX(), p.getY()) == backgroundColor) {
+		viewport.drawPixel(p, bitmap, color);
+		fill(Point2D(p.getX() + 1, p.getY()), color, backgroundColor);
+		fill(Point2D(p.getX() - 1, p.getY()), color, backgroundColor);
+		fill(Point2D(p.getX(), p.getY() + 1), color, backgroundColor);
+		fill(Point2D(p.getX(), p.getY() - 1), color, backgroundColor);
+	}
+}
+
+void Engine::fillStack(Point2D p, int color, int backgroundColor) {
+	Point2D tmp;
+
+	if (getpixel(bitmap, p.getX(), p.getY()) == color)
+		return;
+
+	if (getpixel(bitmap, p.getX(), p.getY()) == backgroundColor) {
+		stack.push(Point2D(p.getX() + 1, p.getY()));
+	}
+	while (!stack.empty()) {
+		tmp = stack.top();
+		putpixel(bitmap, tmp.getX(), tmp.getY(), color);
+
+		stack.pop();
+
+		if (getpixel(bitmap, tmp.getX() + 1, tmp.getY()) == backgroundColor && viewport.isInViewport(tmp)) {
+			stack.push(Point2D(tmp.getX() + 1, tmp.getY()));
+		}
+		if (getpixel(bitmap, tmp.getX() - 1, tmp.getY()) == backgroundColor && viewport.isInViewport(tmp)) {
+			stack.push(Point2D(tmp.getX() - 1, tmp.getY()));
+		}
+		if (getpixel(bitmap, tmp.getX(), tmp.getY() + 1) == backgroundColor && viewport.isInViewport(tmp)) {
+			stack.push(Point2D(tmp.getX(), tmp.getY() + 1));
+		}
+		if (getpixel(bitmap, tmp.getX(), tmp.getY() - 1) == backgroundColor && viewport.isInViewport(tmp)) {
+			stack.push(Point2D(tmp.getX(), tmp.getY() - 1));
+		}
+	}
 }
 
 Engine & Engine::getInstance(int width, int height) {

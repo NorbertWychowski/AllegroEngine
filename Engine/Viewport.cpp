@@ -32,6 +32,17 @@ void Viewport::drawViewport(BITMAP * bitmap, float r, float g, float b, LineStyl
 		Point2D(oppositeCorner.getX(), firstCorner.getY()), makecol(r * 255, g * 255, b * 255), lineStyle);
 }
 
+void Viewport::drawViewport(BITMAP * bitmap, int r, int g, int b, LineStyle lineStyle) {
+	LineSegment::drawLineS(bitmap, Point2D(firstCorner.getX(), firstCorner.getY()),
+		Point2D(firstCorner.getX(), oppositeCorner.getY()), makecol(r, g, b), lineStyle);
+	LineSegment::drawLineS(bitmap, Point2D(firstCorner.getX(), firstCorner.getY()),
+		Point2D(oppositeCorner.getX(), firstCorner.getY()), makecol(r, g, b), lineStyle);
+	LineSegment::drawLineS(bitmap, Point2D(oppositeCorner.getX(), oppositeCorner.getY()),
+		Point2D(firstCorner.getX(), oppositeCorner.getY()), makecol(r, g, b), lineStyle);
+	LineSegment::drawLineS(bitmap, Point2D(oppositeCorner.getX(), oppositeCorner.getY()),
+		Point2D(oppositeCorner.getX(), firstCorner.getY()), makecol(r, g, b), lineStyle);
+}
+
 void Viewport::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
 	int x1, x2, y1, y2;
 
@@ -146,4 +157,30 @@ std::vector<LineSegment> Viewport::cutLines(std::vector<LineSegment> lines) {
 		tmp.push_back(cutLine(line)[0]);
 	}
 	return tmp;
+}
+
+void Viewport::drawPixel(Point2D point, BITMAP* bitmap, int color) {
+	if (point.getX() > firstCorner.getX() && point.getX() < oppositeCorner.getX()
+		&& point.getY() > firstCorner.getY() && point.getY() < oppositeCorner.getY())
+		putpixel(bitmap, point.getX(), point.getY(), color);
+
+}
+
+void Viewport::drawPixel(Point2D point, BITMAP * bitmap, float r, float g, float b) {
+	if (point.getX() > firstCorner.getX() && point.getX() < oppositeCorner.getX()
+		&& point.getY() > firstCorner.getY() && point.getY() < oppositeCorner.getY())
+		putpixel(bitmap, point.getX(), point.getY(), makecol(r * 255, g * 255, b * 255));
+}
+
+void Viewport::drawPixel(Point2D point, BITMAP * bitmap, int r, int g, int b) {
+	if (point.getX() > firstCorner.getX() && point.getX() < oppositeCorner.getX()
+		&& point.getY() > firstCorner.getY() && point.getY() < oppositeCorner.getY())
+		putpixel(bitmap, point.getX(), point.getY(), makecol(r, g, b));
+}
+
+bool Viewport::isInViewport(Point2D point) {
+	if (point.getX() > firstCorner.getX() && point.getX() < oppositeCorner.getX()
+		&& point.getY() > firstCorner.getY() && point.getY() < oppositeCorner.getY())
+		return true;
+	return false;
 }

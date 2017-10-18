@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <stack>
 
 #include "Timer.h"
 #include "Point2D.h"
@@ -15,6 +16,9 @@
 #include <initializer_list>
 
 #define FRAMES_PER_SECOND 60
+
+#define ENABLE_SCREEN_REFRESH true
+#define DISABLE_SCREEN_REFRESH false
 
 #define WHITE	makecol(255, 255, 255)
 #define BLACK	makecol(0, 0, 0)
@@ -32,6 +36,12 @@ enum Flags {
 	INSTALL_TIMER = 1 << 3
 };
 
+enum MouseButton {
+	LEFT_BUTTON = 1 << 0,
+	RIGHT_BUTTON = 1 << 1,
+	MIDDLE_BUTTON = 1 << 2
+};
+
 struct DefaultResolution {
 	int width; int height;
 };
@@ -42,15 +52,20 @@ static DefaultResolution const RES_1024x768 = { 1024, 768 };
 static DefaultResolution const RES_1600x900 = { 1600, 900 };
 static DefaultResolution const RES_1920x1080 = { 1920, 1080 };
 
+
+
 class Engine
 {
 public:
+	typedef void(*func)(Engine*);
+
 	Engine(int width, int height);
 	Engine(struct DefaultResolution resolution);
 	~Engine();
 
 	int initAllegro(int flags);
 	int initAllegro(int flags, int windowMode, struct DefaultResolution resolution);
+	int initMouseEvent(std::initializer_list<func> list);
 
 	int displayErrorMessage(char message[]);
 	int displayErrorMessage(std::string message);
@@ -65,38 +80,56 @@ public:
 	Viewport getViewport();
 	BITMAP* getBITMAP();
 
-	typedef void(*func)(Engine*);
-	void loop(std::initializer_list<func> list);
+	void loop(std::initializer_list<func> list, bool screenRefresh = ENABLE_SCREEN_REFRESH);
 
 	void drawPoint(Point2D point, int color);
 	void drawPoint(Point2D point, float r, float g, float b);
+	void drawPoint(Point2D point, int r, int g, int b);
 	void drawPoints(std::vector<Point2D> points, int color);
 	void drawPoints(std::vector<Point2D> points, float r, float g, float b);
-	void drawEllipse(Point2D point, int Rx, int Ry, int color);
-	void drawEllipse(Point2D point, int Rx, int Ry, float r, float g, float b);
-	void drawFilledEllipse(Point2D point, int Rx, int Ry, int color);
-	void drawFilledEllipse(Point2D point, int Rx, int Ry, float r, float g, float b);
+	void drawPoints(std::vector<Point2D> points, int r, int g, int b);
 	void drawRectangle(Point2D firstCorner, Point2D oppositeCorner, int color);
 	void drawRectangle(Point2D firstCorner, Point2D oppositeCorner, float r, float g, float b);
+	void drawRectangle(Point2D firstCorner, Point2D oppositeCorner, int r, int g, int b);
 	void drawFilledRectangle(Point2D firstCorner, Point2D oppositeCorner, int color);
 	void drawFilledRectangle(Point2D firstCorner, Point2D oppositeCorner, float r, float g, float b);
+	void drawFilledRectangle(Point2D firstCorner, Point2D oppositeCorner, int r, int g, int b);
 	void drawCircle(Point2D point, int radius, int color);
 	void drawCircle(Point2D point, int radius, float r, float g, float b);
+	void drawCircle(Point2D point, int radius, int r, int g, int b);
+	void drawCircle4(Point2D point, int radius, int color);
+	void drawCircle4(Point2D point, int radius, float r, float g, float b);
+	void drawCircle4(Point2D point, int radius, int r, int g, int b);
 	void drawFilledCircle(Point2D point, int radius, int color);
 	void drawFilledCircle(Point2D point, int radius, float r, float g, float b);
+	void drawFilledCircle(Point2D point, int radius, int r, int g, int b);
 	void drawTriangle(Point2D p1, Point2D p2, Point2D p3, int color);
 	void drawTriangle(Point2D p1, Point2D p2, Point2D p3, float r, float g, float b);
+	void drawTriangle(Point2D p1, Point2D p2, Point2D p3, int r, int g, int b);
 	void drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int color);
 	void drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, float r, float g, float b);
+	void drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int r, int g, int b);
 
+	void fill(Point2D p, int color);
+	void fill(Point2D p, float r, float g, float b);
+	void fill(Point2D p, int r, int g, int b);
+	void fillStack(Point2D p, int color);
+	void fillStack(Point2D p, float r, float g, float b);
+	void fillStack(Point2D p, int r, int g, int b);
 
 private:
-	BITMAP *bitmap;
-	Timer *timer;
+	BITMAP *bitmap = nullptr;
+	Timer *timer = nullptr;
 	Viewport viewport;
+	std::stack<Point2D> stack;
+	std::vector<func> mouseFunctions;
 	int width = 800, height = 600;
 	int windowMode = GFX_AUTODETECT_WINDOWED;
 	int exitKey;
+	int installedDevices;
+
+	void fill(Point2D p, int color, int backgroundColor);
+	void fillStack(Point2D p, int color, int backgroundColor);
 };
 END_OF_FUNCTION(timer);
 
