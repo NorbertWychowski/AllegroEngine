@@ -84,6 +84,8 @@ int main() {
 
 	e.setViewport(Point2D(50, 50), Point2D(800, 800));
 
+
+	//NIE POLECAM KLIKAC PPM PRZY ENABLE_SCREEN_REFRESH
 	e.loop({ f1 }, ENABLE_SCREEN_REFRESH);
 
 	return 1;
