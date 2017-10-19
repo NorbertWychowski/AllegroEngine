@@ -4,6 +4,7 @@
 
 int x = 0;
 int y = 0;
+float speed = 10.0;
 
 void f1(Engine *e) {
 	std::vector<Point2D> v;
@@ -61,6 +62,15 @@ void f2(Engine *e) {
 	if (mouse_b & MIDDLE_BUTTON) {
 
 	}
+	e->getPlayer()->moveTo(mouse_x, mouse_y);
+}
+
+void f3(Engine *e) {
+	if (key[KEY_SPACE]) {
+		e->getPlayer()->setSpeed(speed*2.0);
+	} else {
+		e->getPlayer()->setSpeed(speed);
+	}
 }
 
 int main() {
@@ -68,14 +78,15 @@ int main() {
 
 	if (e.initAllegro(INSTALL_KEYBOARD | INSTALL_TIMER | INSTALL_MOUSE) < 0)
 		return -1;
-	e.setExitKey(KEY_ESC);
 
-	if (e.initMouseEvent({ f2 }) < 0)
+	e.addPlayer(speed, "bitmap/playerBitmap.bmp");
+
+	if (e.initMouseEvent({ f2 }) < 0 || e.initKeyBoardEvent({ f3 }) < 0)
 		return -1;
+
 	e.setViewport(Point2D(50, 50), Point2D(800, 800));
 
-
-	e.loop({ f1 }, DISABLE_SCREEN_REFRESH);
+	e.loop({ f1 }, ENABLE_SCREEN_REFRESH);
 
 	return 1;
 }

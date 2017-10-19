@@ -49,8 +49,7 @@ void Viewport::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
 	if (firstCorner.getX() < oppositeCorner.getX()) {
 		x1 = firstCorner.getX();
 		x2 = oppositeCorner.getX();
-	}
-	else {
+	} else {
 		x2 = firstCorner.getX();
 		x1 = oppositeCorner.getX();
 	}
@@ -58,8 +57,7 @@ void Viewport::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
 	if (firstCorner.getY() < oppositeCorner.getY()) {
 		y1 = firstCorner.getY();
 		y2 = oppositeCorner.getY();
-	}
-	else {
+	} else {
 		y2 = firstCorner.getY();
 		y1 = oppositeCorner.getY();
 	}
@@ -81,27 +79,23 @@ std::vector<LineSegment> Viewport::cutLine(LineSegment line) {
 		codeP2 = 0;
 		if (x1 < firstCorner.getX()) {
 			codeP1 += (1 << 0);
-		}
-		else if (x1 > oppositeCorner.getX()) {
+		} else if (x1 > oppositeCorner.getX()) {
 			codeP1 += (1 << 1);
 		}
 		if (y1 > oppositeCorner.getY()) {
 			codeP1 += (1 << 2);
-		}
-		else if (y1 < firstCorner.getY()) {
+		} else if (y1 < firstCorner.getY()) {
 			codeP1 += (1 << 3);
 		}
 
 		if (x2 < firstCorner.getX()) {
 			codeP2 += (1 << 0);
-		}
-		else if (x2 > oppositeCorner.getX()) {
+		} else if (x2 > oppositeCorner.getX()) {
 			codeP2 += (1 << 1);
 		}
 		if (y2 > oppositeCorner.getY()) {
 			codeP2 += (1 << 2);
-		}
-		else if (y2 < firstCorner.getY()) {
+		} else if (y2 < firstCorner.getY()) {
 			codeP2 += (1 << 3);
 		}
 
@@ -113,16 +107,14 @@ std::vector<LineSegment> Viewport::cutLine(LineSegment line) {
 			tmp.push_back(line);
 
 			return tmp;
-		}
-		else if ((codeP1 & codeP2) != 0) {
+		} else if ((codeP1 & codeP2) != 0) {
 			LineSegment l = line;
 			l.setP1(Point2D(0, 0));
 			l.setP2(Point2D(0, 0));
 			tmp.push_back(l);
 			tmp.push_back(line);
 			return tmp;
-		}
-		else {
+		} else {
 			if (codeP1 == 0) {
 				swap(codeP1, codeP2);
 				swap(x1, x2);

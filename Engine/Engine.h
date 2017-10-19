@@ -9,6 +9,7 @@
 #include "Point2D.h"
 #include "Viewport.h"
 #include "LineSegment.h"
+#include "Player.h"
 
 #include <allegro.h>
 
@@ -54,8 +55,7 @@ static DefaultResolution const RES_1920x1080 = { 1920, 1080 };
 
 
 
-class Engine
-{
+class Engine {
 public:
 	typedef void(*func)(Engine*);
 
@@ -66,6 +66,7 @@ public:
 	int initAllegro(int flags);
 	int initAllegro(int flags, int windowMode, struct DefaultResolution resolution);
 	int initMouseEvent(std::initializer_list<func> list);
+	int initKeyBoardEvent(std::initializer_list<func> list);
 
 	int displayErrorMessage(char message[]);
 	int displayErrorMessage(std::string message);
@@ -73,12 +74,18 @@ public:
 	void setExitKey(int key);
 	void setViewport(Point2D firstCorner, Point2D oppositeCorner);
 
+	void addPlayer(float speed, std::string filename);
+	void addPlayer(float speed, char *filename);
+	void addPlayer(int x, int y, float speed, std::string filename);
+	void addPlayer(int x, int y, float speed, char *filename);
+
 	static Engine & getInstance(int width, int height);
 	static Engine & getInstance(struct DefaultResolution resolution);
 	int getWidth();
 	int getHeight();
 	Viewport getViewport();
 	BITMAP* getBITMAP();
+	Player* getPlayer();
 
 	void loop(std::initializer_list<func> list, bool screenRefresh = ENABLE_SCREEN_REFRESH);
 
@@ -120,12 +127,13 @@ public:
 private:
 	BITMAP *bitmap = nullptr;
 	Timer *timer = nullptr;
+	Player *player = nullptr;
 	Viewport viewport;
 	std::stack<Point2D> stack;
-	std::vector<func> mouseFunctions;
+	std::vector<func> eventFunctions;
 	int width = 800, height = 600;
 	int windowMode = GFX_AUTODETECT_WINDOWED;
-	int exitKey;
+	int exitKey = KEY_ESC;
 	int installedDevices;
 
 	void fill(Point2D p, int color, int backgroundColor);

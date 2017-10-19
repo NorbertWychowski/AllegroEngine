@@ -22,6 +22,7 @@ Engine::Engine(DefaultResolution resolution) {
 
 Engine::~Engine() {
 	delete timer;
+	delete player;
 	show_mouse(screen);
 	destroy_bitmap(bitmap);
 	allegro_exit();
@@ -35,8 +36,7 @@ int Engine::initAllegro(int flags) {
 	if (flags & INSTALL_MOUSE) {
 		if (install_mouse() < 0) {
 			return displayErrorMessage("Nie udalo sie zainstalowac myszy!");
-		}
-		else {
+		} else {
 			enable_hardware_cursor();
 			show_os_cursor(MOUSE_CURSOR_ARROW);
 		}
@@ -49,16 +49,14 @@ int Engine::initAllegro(int flags) {
 	if (flags & INSTALL_SOUND) {
 		if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, "") < 0) {
 			return displayErrorMessage("Nie udalo sie zainstalowac dzwieku!");
-		}
-		else {
+		} else {
 			set_volume(255, 255);
 		}
 	}
 	if (flags & INSTALL_TIMER) {
 		if (install_timer() < 0) {
 			return displayErrorMessage("Nie udalo sie zainstalowac timera!\n");
-		}
-		else {
+		} else {
 			timer = new Timer(FRAMES_PER_SECOND);
 		}
 	}
@@ -85,11 +83,19 @@ int Engine::initAllegro(int flags, int windowMode, DefaultResolution resolution)
 
 int Engine::initMouseEvent(std::initializer_list<func> list) {
 	if (installedDevices & INSTALL_MOUSE) {
-		mouseFunctions = list;
+		eventFunctions.insert(eventFunctions.end(), list);
 		return 1;
-	}
-	else {
+	} else {
 		return displayErrorMessage("Nalezy dodac obsluge myszy!\n");
+	}
+}
+
+int Engine::initKeyBoardEvent(std::initializer_list<func> list) {
+	if (installedDevices & INSTALL_KEYBOARD) {
+		eventFunctions.insert(eventFunctions.end(), list);
+		return 1;
+	} else {
+		return displayErrorMessage("Nalezy dodac obsluge klawiatury!\n");
 	}
 }
 
@@ -113,22 +119,41 @@ void Engine::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
 	viewport.setViewport(firstCorner, oppositeCorner);
 }
 
+void Engine::addPlayer(float speed, std::string filename) {
+	player = new Player(width / 2, height / 2, speed, filename.c_str());
+}
+
+void Engine::addPlayer(float speed, char * filename) {
+	player = new Player(width / 2, height / 2, speed, filename);
+}
+
+void Engine::addPlayer(int x, int y, float speed, std::string filename) {
+	player = new Player(x, y, speed, filename.c_str());
+}
+
+void Engine::addPlayer(int x, int y, float speed, char * filename) {
+	player = new Player(x, y, speed, filename);
+}
+
 void Engine::loop(std::initializer_list<func> list, bool screenRefresh) {
 	Timer *timer = new Timer(60);
-
-	int x = 0;
-	int y = 0;
+	BITMAP *playertmp = nullptr;
+	if (player)
+		playertmp = player->getBitmap();
 
 	while (!key[exitKey]) {
 		while (timer->getCount() > 0) {
+			for (func e : eventFunctions) {
+				e(this);
+			}
 			for (func f : list) {
 				f(this);
 			}
-			for (func m : mouseFunctions) {
-				m(this);
-			}
 
-			//show_mouse(bitmap);
+			if (playertmp)
+				blit(playertmp, bitmap, 0, 0, player->getX() - playertmp->w / 2, player->getY() - playertmp->h / 2,
+					playertmp->w, playertmp->h);
+
 			blit(bitmap, screen, 0, 0, 0, 0, width, height);
 			if (screenRefresh)
 				clear_to_color(bitmap, WHITE);
@@ -436,4 +461,8 @@ Viewport Engine::getViewport() {
 
 BITMAP * Engine::getBITMAP() {
 	return bitmap;
+}
+
+Player * Engine::getPlayer() {
+	return player;
 }
