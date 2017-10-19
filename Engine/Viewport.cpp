@@ -65,6 +65,14 @@ void Viewport::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
 	this->oppositeCorner = Point2D(x2, y2);
 }
 
+Point2D Viewport::getFirstCorner() {
+	return firstCorner;
+}
+
+Point2D Viewport::getOppositeCorner() {
+	return oppositeCorner;
+}
+
 std::vector<LineSegment> Viewport::cutLine(LineSegment line) {
 	std::vector<LineSegment> tmp;
 	int x1 = line.getP1().getX();

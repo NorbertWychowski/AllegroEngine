@@ -138,8 +138,15 @@ void Engine::addPlayer(int x, int y, float speed, char * filename) {
 void Engine::loop(std::initializer_list<func> list, bool screenRefresh) {
 	Timer *timer = new Timer(60);
 	BITMAP *playertmp = nullptr;
+
 	if (player)
 		playertmp = player->getBitmap();
+
+	int dx, dy;
+	int width = playertmp->w;
+	int height = playertmp->h;
+	int halfWidth = playertmp->w  *0.5;
+	int halfHeight = playertmp->h * 0.5;
 
 	while (!key[exitKey]) {
 		while (timer->getCount() > 0) {
@@ -150,11 +157,30 @@ void Engine::loop(std::initializer_list<func> list, bool screenRefresh) {
 				f(this);
 			}
 
-			if (playertmp)
-				blit(playertmp, bitmap, 0, 0, player->getX() - playertmp->w / 2, player->getY() - playertmp->h / 2,
-					playertmp->w, playertmp->h);
+			if (playertmp) {
+				width = playertmp->w;
+				height = playertmp->h;
+				dx = 0;
+				dy = 0;
+				if (player->getX() - halfWidth < viewport.getFirstCorner().getX()) {
+					dx = viewport.getFirstCorner().getX() - player->getX() + halfWidth;
+					width -= dx;
+				}
+				if (player->getY() - halfHeight < viewport.getFirstCorner().getY()) {
+					dy = viewport.getFirstCorner().getY() - player->getY() + halfHeight;
+					height -= dy;
+				}
+				if (player->getX() + halfWidth > viewport.getOppositeCorner().getX()) {
+					width -= player->getX() + halfWidth - viewport.getOppositeCorner().getX();
+				}
+				if (player->getY() + halfHeight > viewport.getOppositeCorner().getY()) {
+					height -= player->getY() + halfHeight - viewport.getOppositeCorner().getY();
+				}
 
-			blit(bitmap, screen, 0, 0, 0, 0, width, height);
+				blit(playertmp, bitmap, dx, dy, player->getX() - halfWidth + dx, player->getY() - halfHeight + dy,
+					width, height);
+			}
+			blit(bitmap, screen, 0, 0, 0, 0, this->width, this->height);
 			if (screenRefresh)
 				clear_to_color(bitmap, WHITE);
 

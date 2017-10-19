@@ -19,6 +19,9 @@ public:
 
 	void setViewport(Point2D firstCorner, Point2D oppositeCorner);
 
+	Point2D getFirstCorner();
+	Point2D getOppositeCorner();
+
 	std::vector<LineSegment> cutLine(LineSegment line);
 	std::vector<LineSegment> cutLines(std::vector<LineSegment> lines);
 	void drawPixel(Point2D point, BITMAP* bitmap, int color);

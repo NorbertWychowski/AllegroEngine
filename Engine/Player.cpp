@@ -38,8 +38,8 @@ void Player::moveTo(int x, int y) {
 	float radius = sqrt(dx*dx + dy*dy);
 
 	if (radius < speed * 10) {
-		this->x += radius / 15 * cosf(alpha);
-		this->y -= radius / 15 * sinf(alpha);
+		this->x += radius / 10 * cosf(alpha);
+		this->y -= radius / 10 * sinf(alpha);
 	} else {
 		this->x += speed * cosf(alpha);
 		this->y -= speed * sinf(alpha);
