@@ -136,7 +136,7 @@ void Engine::addPlayer(int x, int y, float speed, char * filename) {
 }
 
 void Engine::loop(std::initializer_list<func> list, bool screenRefresh) {
-	Timer *timer = new Timer(60);
+	Timer *timer = new Timer(FRAMES_PER_SECOND);
 	BITMAP *playertmp = nullptr;
 
 	if (player)
@@ -145,7 +145,7 @@ void Engine::loop(std::initializer_list<func> list, bool screenRefresh) {
 	int dx, dy;
 	int width = playertmp->w;
 	int height = playertmp->h;
-	int halfWidth = playertmp->w  *0.5;
+	int halfWidth = playertmp->w * 0.5;
 	int halfHeight = playertmp->h * 0.5;
 
 	while (!key[exitKey]) {
