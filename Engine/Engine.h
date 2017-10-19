@@ -116,6 +116,15 @@ public:
 	void drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int color);
 	void drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, float r, float g, float b);
 	void drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int r, int g, int b);
+	void drawLine(Point2D p1, Point2D p2, int color, LineStyle lineStyle = SolidLine);
+	void drawLine(Point2D p1, Point2D p2, float r, float g, float b, LineStyle lineStyle = SolidLine);
+	void drawLine(Point2D p1, Point2D p2, int r, int g, int b, LineStyle lineStyle = SolidLine);
+	void drawOpenPolygon(std::vector<Point2D> points, int color, LineStyle lineStyle = SolidLine);
+	void drawOpenPolygon(std::vector<Point2D> points, float r, float g, float b, LineStyle lineStyle = SolidLine);
+	void drawOpenPolygon(std::vector<Point2D> points, int r, int g, int b, LineStyle lineStyle = SolidLine);
+	void drawClosePolygon(std::vector<Point2D> points, int color, LineStyle lineStyle = SolidLine);
+	void drawClosePolygon(std::vector<Point2D> points, float r, float g, float b, LineStyle lineStyle = SolidLine);
+	void drawClosePolygon(std::vector<Point2D> points, int r, int g, int b, LineStyle lineStyle = SolidLine);
 
 	void fill(Point2D p, int color);
 	void fill(Point2D p, float r, float g, float b);

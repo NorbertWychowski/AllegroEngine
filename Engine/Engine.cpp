@@ -384,6 +384,60 @@ void Engine::drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int r, int g
 
 }
 
+void Engine::drawLine(Point2D p1, Point2D p2, int color, LineStyle lineStyle) {
+	viewport.cutLine(LineSegment(bitmap, p1, p2, lineStyle))[0].drawLine(color);
+}
+
+void Engine::drawLine(Point2D p1, Point2D p2, float r, float g, float b, LineStyle lineStyle) {
+	viewport.cutLine(LineSegment(bitmap, p1, p2, lineStyle))[0].drawLine(makecol(r * 255, g * 255, b * 255));
+}
+
+void Engine::drawLine(Point2D p1, Point2D p2, int r, int g, int b, LineStyle lineStyle) {
+	viewport.cutLine(LineSegment(bitmap, p1, p2, lineStyle))[0].drawLine(makecol(r, g, b));
+}
+
+void Engine::drawOpenPolygon(std::vector<Point2D> points, int color, LineStyle lineStyle) {
+	for (int i = 0; i < points.size() - 1; ++i) {
+		viewport.cutLine(LineSegment(bitmap, points[i], points[i + 1], lineStyle))[0].drawLine(color);
+	}
+}
+
+void Engine::drawOpenPolygon(std::vector<Point2D> points, float r, float g, float b, LineStyle lineStyle) {
+	for (int i = 0; i < points.size() - 1; ++i) {
+		viewport.cutLine(LineSegment(bitmap, points[i], points[i + 1], lineStyle))[0].drawLine(makecol(r * 255, g * 255, b * 255));
+	}
+}
+
+void Engine::drawOpenPolygon(std::vector<Point2D> points, int r, int g, int b, LineStyle lineStyle) {
+	for (int i = 0; i < points.size() - 1; ++i) {
+		viewport.cutLine(LineSegment(bitmap, points[i], points[i + 1], lineStyle))[0].drawLine(makecol(r, g, b));
+	}
+}
+
+void Engine::drawClosePolygon(std::vector<Point2D> points, int color, LineStyle lineStyle) {
+	for (int i = 0; i < points.size() - 1; ++i) {
+		viewport.cutLine(LineSegment(bitmap, points[i], points[i + 1], lineStyle))[0].drawLine(color);
+	}
+	if (!points.empty())
+		viewport.cutLine(LineSegment(bitmap, points.front(), points.back(), lineStyle))[0].drawLine(color);
+}
+
+void Engine::drawClosePolygon(std::vector<Point2D> points, float r, float g, float b, LineStyle lineStyle) {
+	for (int i = 0; i < points.size() - 1; ++i) {
+		viewport.cutLine(LineSegment(bitmap, points[i], points[i + 1], lineStyle))[0].drawLine(makecol(r * 255, g * 255, b * 255));
+	}
+	if (!points.empty())
+		viewport.cutLine(LineSegment(bitmap, points.front(), points.back(), lineStyle))[0].drawLine(makecol(r * 255, g * 255, b * 255));
+}
+
+void Engine::drawClosePolygon(std::vector<Point2D> points, int r, int g, int b, LineStyle lineStyle) {
+	for (int i = 0; i < points.size() - 1; ++i) {
+		viewport.cutLine(LineSegment(bitmap, points[i], points[i + 1], lineStyle))[0].drawLine(makecol(r, g, b));
+	}
+	if (!points.empty())
+		viewport.cutLine(LineSegment(bitmap, points.front(), points.back(), lineStyle))[0].drawLine(makecol(r, g, b));
+}
+
 void Engine::fill(Point2D p, int color) {
 	if ((getpixel(bitmap, p.getX(), p.getY()) != color) && viewport.isInViewport(p)) {
 		fill(Point2D(p.getX() + 1, p.getY()), color, getpixel(bitmap, p.getX(), p.getY()));

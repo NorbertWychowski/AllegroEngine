@@ -31,12 +31,8 @@ void f1(Engine *e) {
 
 	LineSegment line1(e->getBITMAP(), Point2D(550, 130), Point2D(30, 830), DashLine);
 	LineSegment line2(e->getBITMAP(), Point2D(50, 130), Point2D(1330, 930));
-	LineSegment line3(e->getBITMAP(), Point2D(850, 30), Point2D(50, 330));
-	LineSegment line4(e->getBITMAP(), Point2D(750, 230), Point2D(400, 690));
-	LineSegment line5(e->getBITMAP(), Point2D(300, 30), Point2D(300, 730));
-	LineSegment line6(e->getBITMAP(), Point2D(30, 330), Point2D(900, 330), DashLine);
 
-	std::vector<LineSegment> v2 = e->getViewport().cutLines({ line1, line2, line3, line4, line5, line6 });
+	std::vector<LineSegment> v2 = e->getViewport().cutLines({ line1, line2 });
 
 	/*
 	for (LineSegment l : v2) {
@@ -44,11 +40,13 @@ void f1(Engine *e) {
 	}*/
 
 	v2[0].drawLine(RED);
-	v2[1].drawLine(BLACK);
-	v2[2].drawLine(CYAN);
-	v2[3].drawLine(MAGENTA);
-	v2[4].drawLine(0.5f, 1.0f, 0.0f);
-	v2[5].drawLine(0.0f, 0.0f, 1.0f);
+	v2[1].drawLine(CYAN);
+
+	std::vector<Point2D> v3 = {Point2D(100, 200), Point2D(300, 150), Point2D(500, 400), Point2D(600, 900)};
+	std::vector<Point2D> v4 = { Point2D(100, 210), Point2D(300, 160), Point2D(500, 410), Point2D(600, 910) };
+
+	e->drawOpenPolygon(v3, MAGENTA);
+	e->drawClosePolygon(v4, GREEN, DashLine);
 
 	e->getViewport().drawViewport(e->getBITMAP(), CYAN, SolidLine);
 }
