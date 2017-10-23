@@ -6,6 +6,41 @@ int x = 0;
 int y = 0;
 float speed = 10.0;
 
+double X1 = 16.0;
+double X2 = 16.0;
+double Y1 = 16.0;
+double Y2 = 16.0;
+double Z1 = 16.0;
+double Z2 = 16.00001;
+
+void atr1(Engine *e) {
+	double x = X1 + 10.0 * (Y1 - X1)*0.01;
+	double y = Y1 + (X1*(28.0 - Z1) - Y1)*0.01;
+	double z = Z1 + (X1*Y1 - (8.0 / 3.0)*Z1)*0.01;
+
+
+	//e->drawLine(Point2D(10 * Y1 + 300, 10 * X1 + 300), Point2D(10 * y + 300, 10 * x + 300), RED);
+	//e->drawLine(Point2D(10 * X1 + 300, 10 * Z1 + 300), Point2D(10 * x + 300, 10 * z + 300), RED);
+	e->drawLine(Point2D(10 * Y1 + 300, 10 * Z1 + 300), Point2D(10 * y + 300, 10 * z + 300), RED);
+
+	X1 = x;
+	Y1 = y;
+	Z1 = z;
+}
+void atr2(Engine *e) {
+	double x = X2 + 10.0 * (Y2 - X2)*0.01;
+	double y = Y2 + (X2*(28.0 - Z2) - Y2)*0.01;
+	double z = Z2 + (X2*Y2 - (8.0 / 3.0)*Z2)*0.01;
+
+	//e->drawLine(Point2D(10 * Y2 + 300, 10 * X2 + 300), Point2D(10 * y + 300, 10 * x + 300), GREEN);
+	//e->drawLine(Point2D(10 * X2 + 300, 10 * Z2 + 300), Point2D(10 * x + 300, 10 * z + 300), GREEN);
+	e->drawLine(Point2D(10 * Y2 + 300, 10 * Z2 + 300), Point2D(10 * y + 300, 10 * z + 300), GREEN);
+
+	X2 = x;
+	Y2 = y;
+	Z2 = z;
+}
+
 void f1(Engine *e) {
 	std::vector<Point2D> v;
 	if (key[KEY_A]) x--;
@@ -42,7 +77,7 @@ void f1(Engine *e) {
 	v2[0].drawLine(RED);
 	v2[1].drawLine(CYAN);
 
-	std::vector<Point2D> v3 = {Point2D(100, 200), Point2D(300, 150), Point2D(500, 400), Point2D(600, 900)};
+	std::vector<Point2D> v3 = { Point2D(100, 200), Point2D(300, 150), Point2D(500, 400), Point2D(600, 900) };
 	std::vector<Point2D> v4 = { Point2D(100, 210), Point2D(300, 160), Point2D(500, 410), Point2D(600, 910) };
 
 	e->drawOpenPolygon(v3, MAGENTA);
@@ -77,16 +112,16 @@ int main() {
 	if (e.initAllegro(INSTALL_KEYBOARD | INSTALL_TIMER | INSTALL_MOUSE) < 0)
 		return -1;
 
-	e.addPlayer(speed, "bitmap/playerBitmap.bmp");
+	//e.addPlayer(speed, "bitmap/playerBitmap.bmp");
 
-	if (e.initMouseEvent({ f2 }) < 0 || e.initKeyBoardEvent({ f3 }) < 0)
-		return -1;
+	//if (e.initMouseEvent({ f2 }) < 0 || e.initKeyBoardEvent({ f3 }) < 0)
+		//return -1;
 
-	e.setViewport(Point2D(50, 50), Point2D(800, 800));
+	//e.setViewport(Point2D(50, 50), Point2D(800, 800));
 
 
 	//NIE POLECAM KLIKAC PPM PRZY ENABLE_SCREEN_REFRESH
-	e.loop({ f1 }, ENABLE_SCREEN_REFRESH);
+	e.loop({ atr1, atr2 }, DISABLE_SCREEN_REFRESH);
 
 	return 1;
 }

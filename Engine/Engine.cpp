@@ -139,14 +139,18 @@ void Engine::loop(std::initializer_list<func> list, bool screenRefresh) {
 	Timer *timer = new Timer(FRAMES_PER_SECOND);
 	BITMAP *playertmp = nullptr;
 
-	if (player)
+	int dx, dy;
+	int halfWidth, halfHeight, width, height;
+
+	if (player) {
 		playertmp = player->getBitmap();
 
-	int dx, dy;
-	int width = playertmp->w;
-	int height = playertmp->h;
-	int halfWidth = playertmp->w * 0.5;
-	int halfHeight = playertmp->h * 0.5;
+
+		width = playertmp->w;
+		height = playertmp->h;
+		halfWidth = playertmp->w * 0.5;
+		halfHeight = playertmp->h * 0.5;
+	}
 
 	while (!key[exitKey]) {
 		while (timer->getCount() > 0) {
@@ -157,7 +161,7 @@ void Engine::loop(std::initializer_list<func> list, bool screenRefresh) {
 				f(this);
 			}
 
-			if (playertmp) {
+			if (player) {
 				width = playertmp->w;
 				height = playertmp->h;
 				dx = 0;
