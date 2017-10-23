@@ -12,16 +12,24 @@ double Y1 = 16.0;
 double Y2 = 16.0;
 double Z1 = 16.0;
 double Z2 = 16.00001;
+int ch = 1;
 
 void atr1(Engine *e) {
 	double x = X1 + 10.0 * (Y1 - X1)*0.01;
 	double y = Y1 + (X1*(28.0 - Z1) - Y1)*0.01;
 	double z = Z1 + (X1*Y1 - (8.0 / 3.0)*Z1)*0.01;
 
-
-	//e->drawLine(Point2D(10 * Y1 + 300, 10 * X1 + 300), Point2D(10 * y + 300, 10 * x + 300), RED);
-	//e->drawLine(Point2D(10 * X1 + 300, 10 * Z1 + 300), Point2D(10 * x + 300, 10 * z + 300), RED);
-	e->drawLine(Point2D(10 * Y1 + 300, 10 * Z1 + 300), Point2D(10 * y + 300, 10 * z + 300), RED);
+	switch (ch) {
+	case 1:
+		e->drawLine(Point2D(10 * Y1 + 300, 10 * X1 + 300), Point2D(10 * y + 300, 10 * x + 300), RED);
+		break;
+	case 2:
+		e->drawLine(Point2D(10 * X1 + 300, 10 * Z1 + 300), Point2D(10 * x + 300, 10 * z + 300), RED);
+		break;
+	case 3:
+		e->drawLine(Point2D(10 * Y1 + 300, 10 * Z1 + 300), Point2D(10 * y + 300, 10 * z + 300), RED);
+		break;
+	}
 
 	X1 = x;
 	Y1 = y;
@@ -32,9 +40,17 @@ void atr2(Engine *e) {
 	double y = Y2 + (X2*(28.0 - Z2) - Y2)*0.01;
 	double z = Z2 + (X2*Y2 - (8.0 / 3.0)*Z2)*0.01;
 
-	//e->drawLine(Point2D(10 * Y2 + 300, 10 * X2 + 300), Point2D(10 * y + 300, 10 * x + 300), GREEN);
-	//e->drawLine(Point2D(10 * X2 + 300, 10 * Z2 + 300), Point2D(10 * x + 300, 10 * z + 300), GREEN);
-	e->drawLine(Point2D(10 * Y2 + 300, 10 * Z2 + 300), Point2D(10 * y + 300, 10 * z + 300), GREEN);
+	switch (ch) {
+	case 1:
+		e->drawLine(Point2D(10 * Y2 + 300, 10 * X2 + 300), Point2D(10 * y + 300, 10 * x + 300), BLUE);
+		break;
+	case 2:
+		e->drawLine(Point2D(10 * X2 + 300, 10 * Z2 + 300), Point2D(10 * x + 300, 10 * z + 300), BLUE);
+		break;
+	case 3:
+		e->drawLine(Point2D(10 * Y2 + 300, 10 * Z2 + 300), Point2D(10 * y + 300, 10 * z + 300), BLUE);
+		break;
+	}
 
 	X2 = x;
 	Y2 = y;
@@ -106,6 +122,25 @@ void f3(Engine *e) {
 	}
 }
 
+void changeAtr(Engine *e) {
+	if (key[KEY_1]) {
+		ch = 1;
+	} else if (key[KEY_2]) {
+		ch = 2;
+	} else if (key[KEY_3]) {
+		ch = 3;
+	}
+	if (key[KEY_1] || key[KEY_2] || key[KEY_3]) {
+		X1 = 16.0;
+		X2 = 16.0;
+		Y1 = 16.0;
+		Y2 = 16.0;
+		Z1 = 16.0;
+		Z2 = 16.00001;
+		clear_to_color(e->getBITMAP(), WHITE);
+	}
+}
+
 int main() {
 	Engine e = Engine::getInstance(RES_1600x900);
 
@@ -116,6 +151,9 @@ int main() {
 
 	//if (e.initMouseEvent({ f2 }) < 0 || e.initKeyBoardEvent({ f3 }) < 0)
 		//return -1;
+
+	if (e.initKeyBoardEvent({ changeAtr }) < 0)
+		return -1;
 
 	//e.setViewport(Point2D(50, 50), Point2D(800, 800));
 

@@ -67,13 +67,13 @@ public:
 	int initAllegro(int flags, int windowMode, struct DefaultResolution resolution);
 	int initMouseEvent(std::initializer_list<func> list);
 	int initKeyBoardEvent(std::initializer_list<func> list);
+	static void close_button_handler(void);
 
 	int displayErrorMessage(char message[]);
 	int displayErrorMessage(std::string message);
 
 	void setExitKey(int key);
 	void setViewport(Point2D firstCorner, Point2D oppositeCorner);
-
 	void addPlayer(float speed, std::string filename);
 	void addPlayer(float speed, char *filename);
 	void addPlayer(int x, int y, float speed, std::string filename);
@@ -144,6 +144,7 @@ private:
 	int windowMode = GFX_AUTODETECT_WINDOWED;
 	int exitKey = KEY_ESC;
 	int installedDevices;
+	static volatile int close_button_pressed;
 
 	void fill(Point2D p, int color, int backgroundColor);
 	void fillStack(Point2D p, int color, int backgroundColor);

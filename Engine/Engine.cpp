@@ -30,6 +30,8 @@ Engine::~Engine() {
 
 int Engine::initAllegro(int flags) {
 	allegro_init();
+	LOCK_FUNCTION(close_button_handler);
+	set_close_button_callback(close_button_handler);
 
 	this->installedDevices = flags;
 
@@ -99,6 +101,11 @@ int Engine::initKeyBoardEvent(std::initializer_list<func> list) {
 	}
 }
 
+void Engine::close_button_handler(void) {
+	close_button_pressed = TRUE;
+}
+END_OF_FUNCTION(close_button_handler)
+
 int Engine::displayErrorMessage(char message[]) {
 	set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
 	allegro_message(message, allegro_error);
@@ -152,7 +159,7 @@ void Engine::loop(std::initializer_list<func> list, bool screenRefresh) {
 		halfHeight = playertmp->h * 0.5;
 	}
 
-	while (!key[exitKey]) {
+	while (!key[exitKey] && !close_button_pressed) {
 		while (timer->getCount() > 0) {
 			for (func e : eventFunctions) {
 				e(this);
@@ -550,3 +557,5 @@ BITMAP * Engine::getBITMAP() {
 Player * Engine::getPlayer() {
 	return player;
 }
+
+volatile int Engine::close_button_pressed = false;
