@@ -264,6 +264,9 @@ void Engine::drawFilledRectangle(Point2D firstCorner, Point2D oppositeCorner, fl
 }
 
 void Engine::drawFilledRectangle(Point2D firstCorner, Point2D oppositeCorner, int r, int g, int b) {
+	rectfill(bitmap, firstCorner.getX(), firstCorner.getY(), oppositeCorner.getX(), oppositeCorner.getY(),
+		makecol(r, g, b));
+
 }
 
 void Engine::drawCircle(Point2D point, int radius, int color) {
@@ -365,6 +368,7 @@ void Engine::drawFilledCircle(Point2D point, int radius, float r, float g, float
 }
 
 void Engine::drawFilledCircle(Point2D point, int radius, int r, int g, int b) {
+	circlefill(bitmap, point.getX(), point.getY(), radius, makecol(r, g, b));
 }
 
 void Engine::drawTriangle(Point2D p1, Point2D p2, Point2D p3, int color) {
@@ -392,7 +396,8 @@ void Engine::drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, float r, flo
 }
 
 void Engine::drawFilledTriangle(Point2D p1, Point2D p2, Point2D p3, int r, int g, int b) {
-
+	triangle(bitmap, p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY(),
+		makecol(r, g, b));
 }
 
 void Engine::drawLine(Point2D p1, Point2D p2, int color, LineStyle lineStyle) {

@@ -24,6 +24,7 @@ public:
 	void setBitmap(BITMAP *playerBitmap);
 	void setBitmap(std::string filename);
 	void setBitmap(char *filename);
+
 private:
 	float x, y;
 	float speed;

@@ -37,11 +37,11 @@ private:
 	void swap(T &a, T &b);
 };
 
-#endif
-
 template<class T>
 inline void Viewport::swap(T & a, T & b) {
 	T tmp = a;
 	a = b;
 	b = tmp;
 }
+
+#endif

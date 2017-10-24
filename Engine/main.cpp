@@ -1,7 +1,10 @@
 #include "Engine.h"
+#include "Rectangle.h"
+#include "Triangle.h"
+#include "Line.h"
+#include "Polygon.h"
 
-//#include "TimerFunction.h"
-
+//za duzo zmiennych globalnych, poprawie to potem
 int x = 0;
 int y = 0;
 float speed = 10.0;
@@ -13,6 +16,8 @@ double Y2 = 16.0;
 double Z1 = 16.0;
 double Z2 = 16.00001;
 int ch = 1;
+
+Rectangle *r = new Rectangle(Point2D(100, 100), Point2D(500, 500));
 
 void atr1(Engine *e) {
 	double x = X1 + 10.0 * (Y1 - X1)*0.01;
@@ -111,7 +116,7 @@ void f2(Engine *e) {
 	if (mouse_b & MIDDLE_BUTTON) {
 
 	}
-	e->getPlayer()->moveTo(mouse_x, mouse_y);
+	//e->getPlayer()->moveTo(mouse_x, mouse_y);
 }
 
 void f3(Engine *e) {
@@ -120,7 +125,6 @@ void f3(Engine *e) {
 	} else {
 		e->getPlayer()->setSpeed(speed);
 	}
-
 }
 
 void changeAtr(Engine *e) {
@@ -142,25 +146,32 @@ void changeAtr(Engine *e) {
 	}
 }
 
+void testShaped(Engine *e) {
+	r->rotate(1, 300, 300);
+	r->scale(1.001, 300, 300);
+	//r->translate(0.1, 0.1);
+	r->draw(e->getBITMAP(), e->getViewport(), RED);
+}
+
 int main() {
 	Engine e = Engine::getInstance(RES_1600x900);
 
 	if (e.initAllegro(INSTALL_KEYBOARD | INSTALL_TIMER | INSTALL_MOUSE) < 0)
 		return -1;
 
-	//e.addPlayer(speed, "bitmap/playerBitmap.bmp");
+	e.addPlayer(speed, "bitmap/playerBitmap.bmp");
 
-	//if (e.initMouseEvent({ f2 }) < 0 || e.initKeyBoardEvent({ f3 }) < 0)
-		//return -1;
-
-	if (e.initKeyBoardEvent({ changeAtr }) < 0)
+	if ( e.initKeyBoardEvent({ f3 }) < 0)
 		return -1;
 
-	//e.setViewport(Point2D(50, 50), Point2D(800, 800));
+	//if (e.initKeyBoardEvent({ changeAtr }) < 0)
+		//return -1;
+
+	e.setViewport(Point2D(50, 50), Point2D(800, 800));
 
 
 	//NIE POLECAM KLIKAC PPM PRZY ENABLE_SCREEN_REFRESH
-	e.loop({ atr1, atr2 }, DISABLE_SCREEN_REFRESH);
+	e.loop({ testShaped }, ENABLE_SCREEN_REFRESH);
 
 	return 1;
 }

@@ -20,19 +20,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="LineSegment.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Point2D.h" />
+    <ClInclude Include="Polygon.h" />
+    <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="ShapeObject.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="Viewport.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="LineSegment.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Point2D.cpp" />
+    <ClCompile Include="Polygon.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="ShapeObject.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Viewport.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

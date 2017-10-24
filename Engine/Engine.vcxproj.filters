@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shapes">
+      <UniqueIdentifier>{e44cee15-5b91-4fdd-9033-d34c4d58f6bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shapes\Pliki nagłówkowe">
+      <UniqueIdentifier>{e306e86e-3c01-4824-ab7d-dac464bfb214}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shapes\Pliki źródłowe">
+      <UniqueIdentifier>{940d951b-5aa7-4068-a6e6-9fa8780b3444}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -32,6 +41,21 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeObject.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Polygon.h">
+      <Filter>Shapes\Pliki źródłowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
+      <Filter>Shapes\Pliki źródłowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Shapes\Pliki źródłowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Shapes\Pliki źródłowe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +79,21 @@
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeObject.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="Polygon.cpp">
+      <Filter>Shapes\Pliki nagłówkowe</Filter>
+    </ClCompile>
+    <ClCompile Include="Rectangle.cpp">
+      <Filter>Shapes\Pliki nagłówkowe</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>Shapes\Pliki nagłówkowe</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Shapes\Pliki nagłówkowe</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
