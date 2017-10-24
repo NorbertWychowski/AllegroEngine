@@ -120,6 +120,7 @@ void f3(Engine *e) {
 	} else {
 		e->getPlayer()->setSpeed(speed);
 	}
+
 }
 
 void changeAtr(Engine *e) {
