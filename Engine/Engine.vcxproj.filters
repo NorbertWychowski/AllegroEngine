@@ -57,6 +57,12 @@
     <ClInclude Include="Line.h">
       <Filter>Shapes\Pliki źródłowe</Filter>
     </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="BitmapHandler.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -94,6 +100,12 @@
     </ClCompile>
     <ClCompile Include="Line.cpp">
       <Filter>Shapes\Pliki nagłówkowe</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapHandler.cpp">
+      <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

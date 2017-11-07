@@ -1,9 +1,8 @@
 #ifndef Player_h
 #define Player_h
 
-#include <string>
-
-#include <allegro.h>
+#include "BitmapHandler.h"
+#include "BoundingBox.h"
 
 class Player {
 public:
@@ -25,10 +24,12 @@ public:
 	void setBitmap(std::string filename);
 	void setBitmap(char *filename);
 
+	bool isCollision(BoundingBox object);
+
 private:
 	float x, y;
 	float speed;
-	BITMAP *playerBitmap = nullptr;
+	BitmapHandler bitmap;
 };
 
 #endif

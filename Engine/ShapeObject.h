@@ -7,8 +7,6 @@
 #include "Point2D.h"
 #include "Viewport.h"
 
-#include <allegro.h>
-
 class ShapeObject {
 public:
 	virtual void draw(BITMAP *bitmap, Viewport viewport, int color) = 0;

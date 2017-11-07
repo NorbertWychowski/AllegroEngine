@@ -2,21 +2,25 @@
 
 
 LineSegment::LineSegment(BITMAP * bitmap, Point2D p1, Point2D p2, LineStyle lineStyle) {
+	this->bitmap = BitmapHandler(bitmap);
+	this->p1 = p1;
+	this->p2 = p2;
+	this->lineStyle = lineStyle;
+}
+
+LineSegment::LineSegment(BitmapHandler bitmap, Point2D p1, Point2D p2, LineStyle lineStyle) {
 	this->bitmap = bitmap;
 	this->p1 = p1;
 	this->p2 = p2;
 	this->lineStyle = lineStyle;
 }
 
-LineSegment::~LineSegment() {
-}
-
 void LineSegment::drawLine(int color) {
-	drawLineA(this->bitmap, this->p1, this->p2, color, lineStyle);
+	drawLineA(this->bitmap.getBitmap(), this->p1, this->p2, color, lineStyle);
 }
 
 void LineSegment::drawLine(float r, float g, float b) {
-	drawLineA(this->bitmap, this->p1, this->p2, makecol(r * 255, g * 255, b * 255), lineStyle);
+	drawLineA(this->bitmap.getBitmap(), this->p1, this->p2, makecol(r * 255, g * 255, b * 255), lineStyle);
 }
 
 void LineSegment::drawLineS(BITMAP * bitmap, Point2D p1, Point2D p2, int color, LineStyle lineStyle) {

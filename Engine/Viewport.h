@@ -5,8 +5,6 @@
 
 #include "LineSegment.h"
 
-#include <allegro.h>
-
 class Viewport {
 public:
 	Viewport();

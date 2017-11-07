@@ -11,9 +11,6 @@
 #include "LineSegment.h"
 #include "Player.h"
 
-#include <allegro.h>
-
-
 #include <initializer_list>
 
 #define FRAMES_PER_SECOND 60
@@ -65,8 +62,8 @@ public:
 
 	int initAllegro(int flags);
 	int initAllegro(int flags, int windowMode, struct DefaultResolution resolution);
-	int initMouseEvent(std::initializer_list<func> list);
-	int initKeyBoardEvent(std::initializer_list<func> list);
+	int initMouseEvent(func moustFunction);
+	int initKeyboardEvent(func keyboardFunction);
 	static void close_button_handler(void);
 
 	int displayErrorMessage(char message[]);
@@ -87,7 +84,7 @@ public:
 	BITMAP* getBITMAP();
 	Player* getPlayer();
 
-	void loop(std::initializer_list<func> list, bool screenRefresh = ENABLE_SCREEN_REFRESH);
+	void loop(std::initializer_list<func> functions, bool screenRefresh = ENABLE_SCREEN_REFRESH);
 
 	void drawPoint(Point2D point, int color);
 	void drawPoint(Point2D point, float r, float g, float b);
@@ -134,7 +131,7 @@ public:
 	void fillStack(Point2D p, int r, int g, int b);
 
 private:
-	BITMAP *bitmap = nullptr;
+	BitmapHandler bitmap;
 	Timer *timer = nullptr;
 	Player *player = nullptr;
 	Viewport viewport;

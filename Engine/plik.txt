@@ -1,0 +1,3 @@
+pierwszy 970 194 50 50
+drugi 970 194 50 50
+nie dziala

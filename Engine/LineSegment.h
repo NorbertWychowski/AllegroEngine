@@ -2,6 +2,7 @@
 #define LineSegment_h
 
 #include "Point2D.h"
+#include "BitmapHandler.h"
 
 #include <allegro.h>
 
@@ -13,7 +14,7 @@ enum LineStyle {
 class LineSegment {
 public:
 	LineSegment(BITMAP *bitmap, Point2D p1, Point2D p2, LineStyle lineStyle = SolidLine);
-	~LineSegment();
+	LineSegment(BitmapHandler bitmap, Point2D p1, Point2D p2, LineStyle lineStyle = SolidLine);
 
 	void drawLine(int color);
 	void drawLine(float r, float g, float b);
@@ -28,7 +29,7 @@ public:
 	Point2D getP2();
 
 private:
-	BITMAP *bitmap;
+	BitmapHandler bitmap;
 	Point2D p1;
 	Point2D p2;
 	LineStyle lineStyle;

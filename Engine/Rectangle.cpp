@@ -1,14 +1,10 @@
 #include "Rectangle.h"
 
-Rectangle::Rectangle(Point2D firstCorner, Point2D oppositeCorner) {
+Rectangle::Rectangle(Point2D firstCorner, Point2D oppositeCorner) : BoundingBox(firstCorner, oppositeCorner) {
 	points.push_back(firstCorner);
 	points.push_back(Point2D(firstCorner.getX(), oppositeCorner.getY()));
 	points.push_back(oppositeCorner);
 	points.push_back(Point2D(oppositeCorner.getX(), firstCorner.getY()));
-}
-
-
-Rectangle::~Rectangle() {
 }
 
 void Rectangle::draw(BITMAP * bitmap, Viewport viewport, int color) {

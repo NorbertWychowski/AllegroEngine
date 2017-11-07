@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BitmapHandler.h" />
+    <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="LineSegment.h" />
@@ -32,6 +34,8 @@
     <ClInclude Include="Viewport.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BitmapHandler.cpp" />
+    <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="LineSegment.cpp" />

@@ -10,7 +10,7 @@ Player::Player(int x, int y, float speed, std::string filename) {
 	this->y = y;
 	this->speed = speed;
 
-	this->playerBitmap = load_bmp(filename.c_str(), default_palette);
+	bitmap.loadBitmap(filename);
 }
 
 Player::Player(int x, int y, float speed, char * filename) {
@@ -18,17 +18,11 @@ Player::Player(int x, int y, float speed, char * filename) {
 	this->y = y;
 	this->speed = speed;
 
-	this->playerBitmap = load_bmp("bitmap/playerBitmap.bmp", default_palette);
-
-
-	if (this->playerBitmap == nullptr) {
-		int x = 0;
-		int y = 10 / x;
-	}
+	bitmap.loadBitmap(filename);
 }
 
 Player::~Player() {
-	destroy_bitmap(playerBitmap);
+	bitmap.deleteBitmap();
 }
 
 void Player::moveTo(int x, int y) {
@@ -58,7 +52,7 @@ float Player::getSpeed() {
 }
 
 BITMAP* Player::getBitmap() {
-	return playerBitmap;
+	return bitmap.getBitmap();
 }
 
 void Player::setX(int x) {
@@ -74,13 +68,21 @@ void Player::setSpeed(float speed) {
 }
 
 void Player::setBitmap(BITMAP * playerBitmap) {
-	this->playerBitmap = playerBitmap;
+	bitmap.setBitmap(playerBitmap);
 }
 
 void Player::setBitmap(std::string filename) {
-	playerBitmap = load_bmp(filename.c_str(), default_palette);
+	bitmap.loadBitmap(filename);
 }
 
 void Player::setBitmap(char * filename) {
-	playerBitmap = load_bmp(filename, default_palette);
+	bitmap.loadBitmap(filename);
+}
+#include <fstream>
+bool Player::isCollision(BoundingBox object) {
+	if (bitmap.getBitmap() != nullptr) {
+		return 	BoundingBox(x - bitmap.getWidth()*0.5, y - bitmap.getHeight()*0.5, bitmap.getWidth(), bitmap.getHeight()).isCollision(object);
+	} else {
+		return false;
+	}
 }

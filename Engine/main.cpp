@@ -125,6 +125,12 @@ void f3(Engine *e) {
 	} else {
 		e->getPlayer()->setSpeed(speed);
 	}
+	Rectangle r(Point2D(300, 300), Point2D(400, 400));
+	r.drawBoundingBox(e->getBITMAP(), BLACK);
+	if (e->getPlayer()->isCollision(r)) {
+		textout_centre(e->getBITMAP(), font, "dziala", 20, 20, RED);
+	}
+	e->getPlayer()->moveTo(mouse_x, mouse_y);
 }
 
 void changeAtr(Engine *e) {
@@ -148,8 +154,9 @@ void changeAtr(Engine *e) {
 
 void testShaped(Engine *e) {
 	r->rotate(1, 300, 300);
-	r->scale(1.001, 300, 300);
+	//r->scale(1.001, 300, 300);
 	//r->translate(0.1, 0.1);
+	e->getViewport().drawViewport(e->getBITMAP(), CYAN);
 	r->draw(e->getBITMAP(), e->getViewport(), RED);
 }
 
@@ -161,7 +168,7 @@ int main() {
 
 	e.addPlayer(speed, "bitmap/playerBitmap.bmp");
 
-	if ( e.initKeyBoardEvent({ f3 }) < 0)
+	if ( e.initKeyboardEvent(f3) < 0)
 		return -1;
 
 	//if (e.initKeyBoardEvent({ changeAtr }) < 0)
