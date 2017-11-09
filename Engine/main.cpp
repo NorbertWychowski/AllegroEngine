@@ -3,6 +3,93 @@
 #include "Triangle.h"
 #include "Line.h"
 #include "Polygon.h"
+#include "BitmapHandler.h"
+
+int simpleGame() {
+	Engine e = Engine::getInstance(RES_1600x900);
+	if (e.initAllegro(INSTALL_KEYBOARD | INSTALL_TIMER | INSTALL_MOUSE) < 0)
+		return -1;
+	e.setExitKey(KEY_ESC);
+	e.addPlayer(5, "bitmap/2.tga");
+	e.disableDrawPlayer(true);
+
+	const float gravity = 1;
+	bool jumping = false;
+
+	int x = 500, y = 500;
+	int HspeedR = 5;
+	int HspeedL = 5;
+	float Vspeed = 0.0;
+	BitmapHandler bitmap1("bitmap/1.tga");
+	BitmapHandler background("bitmap/background.bmp");
+
+	BitmapHandler buf(e.getBITMAP());
+
+	Rectangle r(Point2D(500, 600), Point2D(655, 899));
+	Rectangle ground(Point2D(0, 750), Point2D(1599, 899));
+
+	auto draw = [&](Engine *e) {
+		if (jumping) {
+			Vspeed += gravity;
+			y += Vspeed;
+		}
+		e->getPlayer()->setX(x);
+		e->getPlayer()->setY(y);
+		if (e->getPlayer()->isCollision(ground) || e->getPlayer()->isCollision(r)) {
+			if (e->getPlayer()->isCollision(ground) && !jumping) {
+				y = ground.getFirstCorner().getY() - e->getPlayer()->getBitmap()->h;
+				e->getPlayer()->setY(y);
+				if (e->getPlayer()->isCollision(r)) {
+					if (e->getPlayer()->getX() < r.getX())
+						HspeedR = 0;
+					else HspeedR = 5;
+					if (e->getPlayer()->getX() > r.getX())
+						HspeedL = 0;
+					else HspeedL = 5;
+				} else {
+					HspeedL = HspeedR = 5;
+				}
+			} else if (e->getPlayer()->isCollision(r) && !jumping) {
+				y = r.getFirstCorner().getY() - e->getPlayer()->getBitmap()->h;
+				e->getPlayer()->setY(y);
+				HspeedL = HspeedR = 5;
+			}
+			jumping = false;
+		} else {
+			jumping = true;
+		}
+
+
+		background.blitBitmap(buf);
+		bitmap1.drawSprite(buf, 500, 600);
+		draw_trans_sprite(buf.getBitmap(), e->getPlayer()->getBitmap(), x, y);
+
+
+		r.drawBoundingBox(buf.getBitmap(), BLACK);
+		ground.drawBoundingBox(buf.getBitmap(), BLACK);
+	};
+
+	auto keyboardEvent = [&](Engine *e) {
+		if (key[KEY_A]) {
+			x -= HspeedL;
+		}
+		if (key[KEY_D]) {
+			x += HspeedR;
+		}
+		if (key[KEY_W] || key[KEY_SPACE]) {
+			if (!jumping) {
+				jumping = true;
+				Vspeed = -20;
+			}
+		}
+	};
+
+	e.initKeyboardEvent(keyboardEvent);
+
+	e.loop({ draw }, ENABLE_SCREEN_REFRESH);
+
+	return 1;
+}
 
 int playerTest() {
 	int speed = 10;
@@ -24,7 +111,7 @@ int playerTest() {
 		Rectangle r(Point2D(300, 300), Point2D(400, 400));
 		r.drawBoundingBox(e->getBITMAP(), BLACK);
 
-		if (e->getPlayer()->isCollision(r)) {
+		if (e->getPlayer()->isCollision(r, true)) {
 			e->drawTriangle(Point2D(50, 50), Point2D(100, 50), Point2D(75, 75), 0.5f, 0.5f, 0.5f);
 		}
 
@@ -203,6 +290,7 @@ int main() {
 	if (playerTest() < 0) return -1;
 	if (drawTest() < 0) return -1;
 	if (lorenzAttractor() < 0) return -1;
+	simpleGame();
 	return 1;
 }
 END_OF_MAIN()

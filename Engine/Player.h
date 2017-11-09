@@ -24,7 +24,7 @@ public:
 	void setBitmap(std::string filename);
 	void setBitmap(char *filename);
 
-	bool isCollision(BoundingBox object);
+	bool isCollision(BoundingBox object, bool centerXY = false);
 
 private:
 	float x, y;

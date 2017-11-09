@@ -71,6 +71,7 @@ public:
 	int displayErrorMessage(std::string message);
 
 	void setExitKey(int key);
+	void disableDrawPlayer(bool b);
 	void setViewport(Point2D firstCorner, Point2D oppositeCorner);
 	void addPlayer(float speed, std::string filename);
 	void addPlayer(float speed, char *filename);
@@ -143,6 +144,7 @@ private:
 	int exitKey = KEY_ESC;
 	int installedDevices;
 	static volatile int close_button_pressed;
+	bool shouldDrawPlayer = true;
 
 	void fill(Point2D p, int color, int backgroundColor);
 	void fillStack(Point2D p, int color, int backgroundColor);

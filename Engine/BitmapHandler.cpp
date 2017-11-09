@@ -28,6 +28,14 @@ BitmapHandler::BitmapHandler(int width, int height, float r, float g, float b) {
 	clear_to_color(bitmap, makecol(255 * r, 255 * g, 255 * b));
 }
 
+BitmapHandler::BitmapHandler(std::string filename) {
+	loadBitmap(filename);
+}
+
+BitmapHandler::BitmapHandler(char * filename) {
+	loadBitmap(filename);
+}
+
 int BitmapHandler::loadBitmap(std::string filename) {
 	bitmap = load_bitmap(filename.c_str(), default_palette);
 	if (bitmap) {
@@ -68,6 +76,14 @@ void BitmapHandler::blitBitmap(BITMAP * destinationBitmap, int sourceX, int sour
 
 void BitmapHandler::blitBitmap(BitmapHandler destinationBitmap, int sourceX, int sourceY, int destinationX, int destinationY, int width, int height) {
 	blit(this->bitmap, destinationBitmap.getBitmap(), sourceX, sourceY, destinationX, destinationY, width, height);
+}
+
+void BitmapHandler::drawSprite(BITMAP * destinationBitmap, int x, int y) {
+	draw_trans_sprite(destinationBitmap, this->bitmap, x, y);
+}
+
+void BitmapHandler::drawSprite(BitmapHandler destinationBitmap, int x, int y) {
+	draw_trans_sprite(destinationBitmap.getBitmap(), this->bitmap, x, y);
 }
 
 void BitmapHandler::resizeBitmap(int width, int height) {

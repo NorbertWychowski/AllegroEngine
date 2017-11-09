@@ -64,6 +64,7 @@ int Engine::initAllegro(int flags) {
 	}
 
 	set_color_depth(desktop_color_depth());
+	set_alpha_blender();
 	set_gfx_mode(windowMode, width, height, 0, 0);
 	set_window_title("Silnik");
 
@@ -121,6 +122,10 @@ void Engine::setExitKey(int key) {
 	this->exitKey = key;
 }
 
+void Engine::disableDrawPlayer(bool b) {
+	shouldDrawPlayer = !b;
+}
+
 void Engine::setViewport(Point2D firstCorner, Point2D oppositeCorner) {
 	viewport.setViewport(firstCorner, oppositeCorner);
 }
@@ -148,7 +153,7 @@ void Engine::loop(std::initializer_list<func> functions, bool screenRefresh) {
 	int dx, dy;
 	int halfWidth, halfHeight, width, height;
 
-	if (player) {
+	if (player && shouldDrawPlayer) {
 		playertmp = BitmapHandler(player->getBitmap());
 
 		width = playertmp.getWidth();
@@ -167,7 +172,7 @@ void Engine::loop(std::initializer_list<func> functions, bool screenRefresh) {
 				f(this);
 			}
 
-			if (player) {
+			if (player && shouldDrawPlayer) {
 				width = playertmp.getWidth();
 				height = playertmp.getHeight();
 				dx = 0;

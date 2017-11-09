@@ -78,10 +78,14 @@ void Player::setBitmap(std::string filename) {
 void Player::setBitmap(char * filename) {
 	bitmap.loadBitmap(filename);
 }
-#include <fstream>
-bool Player::isCollision(BoundingBox object) {
+
+bool Player::isCollision(BoundingBox object, bool centerXY) {
 	if (bitmap.getBitmap() != nullptr) {
-		return 	BoundingBox(x - bitmap.getWidth()*0.5, y - bitmap.getHeight()*0.5, bitmap.getWidth(), bitmap.getHeight()).isCollision(object);
+		if (centerXY) {
+			return BoundingBox(x - bitmap.getWidth()*0.5, y - bitmap.getHeight()*0.5, bitmap.getWidth(), bitmap.getHeight()).isCollision(object);
+		} else {
+			return BoundingBox(x, y, bitmap.getWidth(), bitmap.getHeight()).isCollision(object);
+		}
 	} else {
 		return false;
 	}

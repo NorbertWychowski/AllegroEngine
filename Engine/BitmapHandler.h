@@ -2,8 +2,7 @@
 #define BitmapHandler_h
 
 #include <string>
-
-#include <allegro.h>
+#include "allegro.h"
 
 class BitmapHandler {
 public:
@@ -13,6 +12,8 @@ public:
 	BitmapHandler(int width, int height, int color);
 	BitmapHandler(int width, int height, int r, int g, int b);
 	BitmapHandler(int width, int height, float r, float g, float b);
+	BitmapHandler(std::string filename);
+	BitmapHandler(char *filename);
 
 	int loadBitmap(std::string filename);
 	int loadBitmap(char *filename);
@@ -23,6 +24,8 @@ public:
 	void blitBitmap(BitmapHandler destinationBitmap);
 	void blitBitmap(BITMAP *destinationBitmap, int sourceX, int sourceY, int destinationX, int destinationY, int width, int height);
 	void blitBitmap(BitmapHandler destinationBitmap, int sourceX, int sourceY, int destinationX, int destinationY, int width, int height);
+	void drawSprite(BITMAP *destinationBitmap, int x, int y);
+	void drawSprite(BitmapHandler destinationBitmap, int x, int y);
 	void resizeBitmap(int width, int height);
 	void clearBitmap();
 	void clearBitmap(int color);
