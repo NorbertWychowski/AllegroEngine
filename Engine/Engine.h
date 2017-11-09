@@ -11,6 +11,7 @@
 #include "LineSegment.h"
 #include "Player.h"
 
+#include <functional>
 #include <initializer_list>
 
 #define FRAMES_PER_SECOND 60
@@ -54,7 +55,7 @@ static DefaultResolution const RES_1920x1080 = { 1920, 1080 };
 
 class Engine {
 public:
-	typedef void(*func)(Engine*);
+	using func = std::function<void(Engine *)>;
 
 	Engine(int width, int height);
 	Engine(struct DefaultResolution resolution);

@@ -151,7 +151,6 @@ void Engine::loop(std::initializer_list<func> functions, bool screenRefresh) {
 	if (player) {
 		playertmp = BitmapHandler(player->getBitmap());
 
-
 		width = playertmp.getWidth();
 		height = playertmp.getHeight();
 		halfWidth = playertmp.getWidth() * 0.5;
