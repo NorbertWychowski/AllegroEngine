@@ -112,7 +112,7 @@ int playerTest() {
 		r.drawBoundingBox(e->getBITMAP(), BLACK);
 
 		if (e->getPlayer()->isCollision(r, true)) {
-			e->drawTriangle(Point2D(50, 50), Point2D(100, 50), Point2D(75, 75), 0.5f, 0.5f, 0.5f);
+			e->drawTriangle(Point2D(0, 200), Point2D(300, 200), Point2D(150, 0), 0.0f, 1.0f, 0.0f);
 		}
 
 		rotateRectangle.rotate(1, cx, cy);
